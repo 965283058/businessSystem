@@ -1,0 +1,21 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "chrome": 45,
+          "browsers": [
+            "last 7 versions",
+            "ie >= 9"
+          ]
+        }
+      }
+    ],
+    "stage-0"
+  ],
+  "plugins": [
+    "transform-vue-jsx",
+    "transform-runtime"
+  ]
+}
