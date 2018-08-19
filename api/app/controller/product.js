@@ -105,6 +105,11 @@ class ProductController extends Controller {
                 return
             }
 
+            if (params.imgType == 1 && params.img.indexOf(this.app.domian) == 0) {
+                throw new Error("商品外链图片不可是本网站图片！")
+                return
+            }
+
             if (params.id && params.imgType == 0 && params.img) {
                 params.img = params.img.replace(this.app.domian, "")
                 if (params.img.indexOf('upload/') != 0) {
