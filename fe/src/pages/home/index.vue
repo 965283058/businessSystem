@@ -5,12 +5,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        font-size: 34px;
     }
 </style>
 <template>
     <div class="home-warp">
-        <h2>
-            过去的 别再遗憾 | 未来的 无须忧虑
-        </h2>
+        过去的 别再遗憾 | 未来的 无须忧虑
     </div>
 </template>

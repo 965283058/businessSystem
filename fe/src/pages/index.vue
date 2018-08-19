@@ -214,6 +214,16 @@
                 <el-button type="primary" @click="changePwd">确 定</el-button>
             </div>
         </el-dialog>
+
+
+        <el-dialog title="管理员通知" :visible.sync="msgDialog.show" width="400px" :show-close="false"
+                   :close-on-click-modal="false" :close-on-press-escape="false">
+            <span>{{msgDialog.text}}</span>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="closeMsgDialog">{{msgDialog.btnText}}</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -230,7 +240,8 @@
                 } else {
                     callback();
                 }
-            };
+            }
+
 
             return {
                 po: {
@@ -260,7 +271,15 @@
                     pwdConfirm: [{validator: validatePass2, trigger: 'blur'}]
                 },
                 messageList: [],
-                messageTimer: null
+                messageTimer: null,
+
+                msgDialog: {
+                    id: null,
+                    text: '',
+                    show: false,
+                    btnText: '',
+                    timer: null
+                }
             }
         },
         components: {},
@@ -316,7 +335,6 @@
                             menu = menu.children[0]
                         }
                         this.to(menu)
-//                        this.to(data[6].children[0])
                     })
                 }).catch(err=> {
                     this.$alert(err.message, {type: 'error'})
@@ -332,19 +350,43 @@
             },
             showMessage(){
                 if (this.messageList && this.messageList.length) {
-                    this.$alert(this.messageList[0].content, "管理员通知", {
-                        confirmButtonText: '确定',
-                        callback: action => {
-                            this.readMessage(this.messageList[0]._id)
-                            this.messageList.splice(0, 1)
+                    this.msgDialog.id = this.messageList[0]._id
+                    this.msgDialog.text = this.messageList[0].content
+                    this.msgDialog.btnText = '30秒后可以关闭'
+                    this.msgDialog.show = true
+                    let time = 30
+                    this.msgDialog.timer = setInterval(()=> {
+                        time -= 1
+                        this.msgDialog.btnText = `${time}秒后可以关闭`
+                        if (time == 0) {
+                            this.msgDialog.btnText = `关闭`
+                            clearInterval(this.msgDialog.timer)
                         }
-                    });
+                    }, 1000)
                 }
             },
+            closeMsgDialog(){
+                if (this.msgDialog.btnText == "关闭") {
+                    this.msgDialog.show = false
+                    let index = -1
+                    for (let i = 0; i < this.messageList.length; i++) {
+                        if (this.messageList[i]._id == this.msgDialog.id) {
+                            index = i
+                            break
+                        }
+                    }
+                    if (index > -1) {
+                        this.messageList.splice(index, 1)
+                    }
+                    this.readMessage(this.msgDialog.id)
+                    this.msgDialog.id = null
+                }
+
+            },
             readMessage(id){
-                this.$post("/message/read", {id}).then(data=> {
+                this.$post("/message/read", {id}).then(data => {
                     this.showMessage()
-                }).catch(err=> {
+                }).catch(err => {
                     this.showMessage()
                 })
             }
@@ -361,7 +403,7 @@
                 this.$router.replace("/login")
             }
             this.getMessage()
-            this.messageTimer = setInterval(this.getMessage, 1000 * 60 * 5)
+            this.messageTimer = setInterval(this.getMessage, 1000 * 60)
         },
         beforeDestroy(){
             clearInterval(this.messageTimer)

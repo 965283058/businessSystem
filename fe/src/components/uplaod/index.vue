@@ -46,6 +46,7 @@
     }
 
     .upload__file {
+        width: 100%;
         display: block;
         position: absolute;
         left: 0;

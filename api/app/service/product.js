@@ -35,10 +35,17 @@ class ProductService extends BaseService {
             if (this.admin.superAdmin != -1) {
                 refs = [{key: 'createor', field: 'name'}]
             }
-            let data = await this.getList('Product', where, params.page, params.rows, {
-                index: 1,
+            let sortObj = {
                 createTime: -1
-            }, refs)
+            }
+            if (params.sort && params.order) {
+                sortObj[params.sort] = Number.parseInt(params.order) || 0
+            }
+            if (this.admin.subperAdmin == -1) {
+                sortObj["urge"] = -1
+            }
+
+            let data = await this.getList('Product', where, params.page, params.rows, sortObj, refs)
 
             let cloneData = this.clone(data)
 

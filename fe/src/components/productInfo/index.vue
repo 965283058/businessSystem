@@ -7,6 +7,10 @@
 
     .cell a {
         word-break: break-all;
+        color: blue;
+    }
+    .cell a:hover {
+        text-decoration: underline;
     }
 
     .cell__caption {
@@ -22,11 +26,6 @@
     .form__img-box {
         margin-right: 20px;
         float: left;
-    }
-
-    .form__title {
-        font-size: 16px;
-        text-align: center;
     }
 
     .form__img-box img {

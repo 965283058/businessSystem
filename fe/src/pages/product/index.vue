@@ -105,7 +105,7 @@
                   @selection-change="selectChange" :row-style="dgRowStyle">
             <el-table-column type="selection" width="55" v-if="status=='wait'||status=='fail'" key="checkbox">
             </el-table-column>
-            <el-table-column key="createTime" label="提交时间" width="95" align="center">
+            <el-table-column key="createTime" prop="createTime" label="提交时间" width="95" align="center" sortable="true">
                 <template slot-scope="scope">
                     {{scope.row.createTime|getDateTimeString}}
                 </template>

@@ -371,6 +371,9 @@
             'po.serviceCharge': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'serviceCharge')
             },
+            'po.commission': function (val, oldVal) {
+                this.numberFilter(val, oldVal, 'commission')
+            },
             '$route': function () {
                 this.vo.mode = 'add'
                 this.reset()

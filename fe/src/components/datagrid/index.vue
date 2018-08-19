@@ -22,7 +22,7 @@
     <div class="dg__warp" v-loading.lock="vo.loading">
         <el-table :data="vo.data" :border="border" :stripe="stripe" :fit="fit" :height="vo.height" :size="size"
                   element-loading-text="拼命加载中" :row-style="rowStyleClone" :row-class-name="rowClassClone"
-                  ref="table">
+                  ref="table" @sort-change="sort">
             <slot></slot>
         </el-table>
         <el-pagination class="jf-pagintion" background
@@ -46,6 +46,10 @@
     export default {
         data: function () {
             return {
+                po: {
+                    sort: null,
+                    order: null
+                },
                 vo: {
                     loading: false,
                     currentPage: 1,
@@ -135,7 +139,7 @@
                 this.loadData()
             },
             loadData(){
-                let params = Object.assign({}, JSON.parse(JSON.stringify(this.params)), {
+                let params = Object.assign({}, this.po, JSON.parse(JSON.stringify(this.params)), {
                     "page": this.vo.currentPage,
                     "rows": this.vo.pageSize
                 })
@@ -174,6 +178,28 @@
                         showClose: true
                     })
                 })
+            },
+
+            sort({column, prop, order}){
+                if (prop) {
+                    if (!order) {
+                        this.po = {
+                            sort: null,
+                            order: null
+                        }
+                    } else if (order == "ascending") {
+                        this.po = {
+                            sort: prop,
+                            order: 1
+                        }
+                    } else if (order == "descending") {
+                        this.po = {
+                            sort: prop,
+                            order: -1
+                        }
+                    }
+                }
+                this.loadData()
             },
             reload(){
                 this.loadData()
