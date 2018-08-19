@@ -1,26 +1,46 @@
 <style scoped>
-    .box {
+    .login-warp {
         min-height: 400px;
         height: 100%;
-        background: #1f2d3d;
+        background: url("./assets/bg.jpg") no-repeat;
+        background-size: cover;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .warp {
+    .login-box {
+        width: 100%;
+        min-width: 600px;
         box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
         background-clip: padding-box;
-        background-color: #F9FAFC;
-        border: 2px solid #8492A6;
-        width: 350px;
-        height: 350px;
-        padding: 35px 35px 15px 35px;
-        overflow: hidden;
+        padding: 35px 0;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .login-box__content {
+        width: 550px;
+        margin: 0 auto;
+    }
+
+    .title {
+        font-family: '微软雅黑 Bold', '微软雅黑';
+        font-weight: 700;
+        font-size: 48px;
+        color: #ffffff;
+    }
+
+    .title--en {
+        font-size: 36px;
+    }
+
+    .login__form {
+        text-align: left;
+    }
+
+    .form__input {
+        width: 220px;
     }
 
     .warp .title {
@@ -30,9 +50,10 @@
     }
 
     .errorStyle {
-        font-size: 14px;
-        color: #ea576f;
-        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+        color: greenyellow;
     }
 
     .errorStyle--show {
@@ -76,25 +97,32 @@
     }
 </style>
 <template>
-    <div class="box">
-        <el-form :model="po" :rules="vo.rules" label-position="left" ref="userForm" class="warp">
-            <h3 class="title">系统登录</h3>
-            <el-form-item prop="userName">
-                <el-input type="text" v-model="po.userName" auto-complete="off" placeholder="账号"
-                          @keydown.enter.native="login"></el-input>
-            </el-form-item>
-            <el-form-item prop="pwd">
-                <el-input type="password" v-model="po.pwd" auto-complete="off" placeholder="密码"
-                          @keydown.enter.native="login"></el-input>
-            </el-form-item>
-            <el-form-item style="width:100%;">
-                <el-button type="primary" style="width:100%;" @click="login()">登录
-                </el-button>
-            </el-form-item>
-            <el-form-item>
-                <span class="errorStyle" :class="{'errorStyle--show':vo.loginErrMsg}">{{vo.loginErrMsg}}</span>
-            </el-form-item>
-        </el-form>
+    <div class="login-warp">
+        <div class="login-box">
+            <div class="login-box__content">
+                <div class="title">
+                    <h1>招商业绩登记平台</h1>
+                    <h1 class="title--en">Investment Performance System</h1>
+                </div>
+                <br>
+                <el-form class="login__form" :model="po" :rules="vo.rules" label-position="left" ref="userForm" inline>
+                    <el-form-item prop="userName">
+                        <el-input class="form__input" type="text" v-model="po.userName" placeholder="账号" wdith="220px"
+                                  @keydown.enter.native="login">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="pwd">
+                        <el-input class="form__input" type="password" v-model="po.pwd" placeholder="密码"
+                                  @keydown.enter.native="login"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="width:100%;" @click="login()">登录
+                        </el-button>
+                    </el-form-item>
+                    <div class="errorStyle" :class="{'errorStyle--show':vo.loginErrMsg}">{{vo.loginErrMsg}}</div>
+                </el-form>
+            </div>
+        </div>
     </div>
 </template>
 <script>
