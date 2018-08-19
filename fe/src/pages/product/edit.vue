@@ -79,7 +79,7 @@
                 <el-input v-model="po.phone" maxlength="11"></el-input>
             </el-form-item>
 
-            <el-form-item label="商家微信" >
+            <el-form-item label="商家微信">
                 <el-input v-model="po.wx" maxlength="25"></el-input>
             </el-form-item>
 
@@ -250,30 +250,22 @@
                 })
             },
             save(){
-                let formEl = this.$refs.form
-
-                formEl.validate((valid) => {
+                this.$refs.form.validate((valid) => {
                     if (valid) {
-                        let files = null
-                        let fileInput = formEl.$el.querySelector('input[type=file]')
-                        if (fileInput) {
-                            files = fileInput.files
-                        }
-
                         let fd = new FormData()
                         if (this.po.id) {
                             fd.append("id", this.po.id)
-                            if (!files || !files.length) {
-                                fd.append("img", this.po.img)
-                            }
-                        } else if (this.po.imgType == 0) {
-                            if (!files || !files.length) {
-                                return this.$message.error("请选择商品图片")
-                            }
                         }
 
-                        if (files && files.length) {
-                            fd.append("img", files[0])
+                        if (this.po.imgType == 0) {
+                            let fileInput = this.$refs.upload.$el.querySelector('input[type=file]')
+                            if (fileInput && fileInput.files.length) {
+                                fd.append("img", fileInput.files[0])
+                            } else {
+                                return this.$message.error("请选择商品图片")
+                            }
+                        } else {
+                            fd.append("img", this.po.img)
                         }
 
 
@@ -303,9 +295,9 @@
                             this.$alert(err.message, {type: 'error'})
                         })
                     }
-                });
+                })
             },
-            getInfo(){
+            getInfo() {
                 if (this.$route.params.id) {
                     let str = window.sessionStorage.getItem("productInfo")
                     try {
@@ -327,16 +319,20 @@
                         this.$router.back()
                     }
                 }
-            },
-            reset(){
+            }
+            ,
+            reset()
+            {
                 this.$refs.form.resetFields()
                 if (this.$refs.upload) {
                     this.$refs.upload.reset()
                 }
                 this.$refs.voucherImageUpload.reset()
                 this.po = JSON.parse(JSON.stringify(this.poClone))
-            },
-            cancel(){
+            }
+            ,
+            cancel()
+            {
                 if (this.$route.params.id) {
                     this.$router.back()
                 } else {
@@ -345,25 +341,37 @@
 
             }
         },
-        mounted(){
+        mounted()
+        {
             this.poClone = JSON.parse(JSON.stringify(this.po))
             this.getInfo()
-        },
-        components: {},
-        filters: {},
+        }
+        ,
+        components: {}
+        ,
+        filters: {}
+        ,
         watch: {
             'po.costPrice': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'costPrice')
-            },
+            }
+
+            ,
             'po.price': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'price')
-            },
+            }
+
+            ,
             'po.serviceCharge': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'serviceCharge')
-            },
+            }
+
+            ,
             'po.commission': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'commission')
-            },
+            }
+
+            ,
             '$route': function () {
                 this.vo.mode = 'add'
                 this.reset()
