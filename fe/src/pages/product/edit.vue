@@ -79,7 +79,7 @@
                 <el-input v-model="po.phone" maxlength="11"></el-input>
             </el-form-item>
 
-            <el-form-item label="商家微信" prop="wx">
+            <el-form-item label="商家微信" >
                 <el-input v-model="po.wx" maxlength="25"></el-input>
             </el-form-item>
 
@@ -141,12 +141,6 @@
                 callback();
             };
 
-            const checkTwo = (rule, value, callback) => {
-                if (!this.po.wx && !this.po.phone) {
-                    return callback(new Error('商家电话和微信必须填写一个'));
-                }
-                callback();
-            };
 
             return {
                 po: {
@@ -211,10 +205,6 @@
                     ],
                     phone: [
                         {validator: checkPhone, trigger: 'blur'},
-                        {validator: checkTwo, trigger: 'blur'},
-                    ],
-                    wx: [
-                        {validator: checkTwo, trigger: 'blur'},
                     ],
                     time: [
                         {validator: checkTime, required: true, trigger: 'change'}

@@ -127,10 +127,6 @@ class ProductController extends Controller {
                 }
             }
 
-            if (!params.phone && !params.wx) {
-                throw new Error("商家电话和微信必须填写一个")
-                return
-            }
 
             params.price = Number.parseFloat(params.price)
             params.costPrice = Number.parseFloat(params.costPrice)
