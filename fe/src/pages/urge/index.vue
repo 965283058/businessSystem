@@ -68,6 +68,22 @@
         display: inline-block
     }
 
+    .dg__button {
+        text-align: center;
+        font-size: 16px;
+        line-height: 26px;
+        color: #0028ff;
+        cursor: pointer;
+    }
+
+    .dg__button--black {
+        color: black;
+    }
+
+    .dg__button--green {
+        color: #259b24;
+    }
+
 </style>
 <template>
     <div class="content-box">
@@ -87,39 +103,49 @@
         <DataGrid url="/product/urgeProductList" :stripe="true" :params="po.params" ref="dg" size="mini"
                   @selection-change="selectChange">
             <el-table-column type="selection" width="55" key="checkbox"></el-table-column>
-            <el-table-column prop="createor.name" label="创建用户" width="120" align="center"></el-table-column>
-            <el-table-column prop="name" label="名称" width="180" header-align="center"></el-table-column>
-            <el-table-column label="图片" width="140" align="center">
+
+            <el-table-column key="createTime" prop="createTime" label="提交时间" width="95" align="center" sortable="true">
+                <template slot-scope="scope">
+                    {{scope.row.createTime|getDateTimeString}}
+                </template>
+            </el-table-column>
+            <el-table-column key="img" label="图片" width="140" align="center">
                 <template slot-scope="scope">
                     <perview class="form__img-box">
-                        <img class="product__img" :src="scope.row.img[0]" alt="">
+                        <a :href="scope.row.orderLink" target="_blank" @click.stop>
+                            <img class="product__img" :src="scope.row.img[0]" alt="图片无法查看" title="点击查看商品">
+                        </a>
+                        <h5 class="dg-img__see">查看图片</h5>
                     </perview>
                 </template>
             </el-table-column>
-            <el-table-column prop="costPrice" label="原价" width="100" header-align="center"
-                             align="right"></el-table-column>
-            <el-table-column prop="price" label="券后价" width="100" header-align="center"
-                             align="right"></el-table-column>
-            <el-table-column label="活动时间" width="200" align="center">
+            <el-table-column key="name" prop="name" label="名称" width="240" header-align="center"></el-table-column>
+            <el-table-column key="active" label="活动时间" width="200" align="center">
                 <template slot-scope="scope">
-                    {{scope.row.beginTime|getDateString}}<span class="time_join">至</span>{{scope.row.endTime|getDateString}}
+                    <div>{{scope.row.beginTime|getDateTimeString}}</div>
+                    <span class="time_join">至</span>
+                    <div>{{scope.row.endTime|getDateTimeString}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="voucherLink" label="券链接" width="280"
-                             header-align="center" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="orderLink" label="下单链接" width="280"
-                             header-align="center" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="desc" label="商品文案" width="180" header-align="center"
-                             show-overflow-tooltip></el-table-column>
-            <el-table-column prop="serviceCharge" label="服务费" width="100" header-align="center"
-                             align="right"></el-table-column>
-            <el-table-column prop="qq" label="QQ" width="100" header-align="center"></el-table-column>
-            <el-table-column prop="phone" label="电话" width="180" header-align="center"></el-table-column>
-            <el-table-column prop="remark" label="备注" width="200" header-align="center"
-                             show-overflow-tooltip></el-table-column>
+            <el-table-column key="price" prop="price" label="券后价" width="100" align="center"></el-table-column>
+            <el-table-column key="commission" label="佣金" width="100" align="center">
+                <template slot-scope="scope">
+                    <div>{{scope.row.commission+'%'}}</div>
+                </template>
+            </el-table-column>
+            <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
+                             align="center"></el-table-column>
+            <el-table-column key="remark" prop="remark" label="备注" min-width="280"
+                             header-align="center"></el-table-column>
+
+            <el-table-column prop="createor.name" label="招商员" width="120" align="center"></el-table-column>
+
             <el-table-column label="操作" align="center" key="setting" width="100" fixed="right">
                 <template slot-scope="scope">
-                    <button class="product__button" @click="urge(scope.row._id)">催单</button>
+                    <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
+                    <p class="dg__button dg__button--green" v-if="canUrge(scope.row)" @click="urge(scope.row._id)">
+                        提醒</p>
+                    <p class="dg__button dg__button--black" v-else>已提醒</p>
                 </template>
             </el-table-column>
         </DataGrid>
@@ -140,12 +166,22 @@
                 <el-button type="primary" @click="sendAllUserNotice">发送</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog width="780px" :visible.sync="vo.showInfoDialog" title="商品详情">
+            <productInfo :product="vo.product"></productInfo>
+            <div slot="footer">
+                <el-button @click="vo.showInfoDialog = false">取 消</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
 <script>
     import {getDateTimeString, getDateString} from 'utils'
     import  perview from 'components/perview'
+    import  productInfo from 'components/productInfo'
+
     export default {
         data(){
             return {
@@ -159,9 +195,12 @@
                     }
                 },
                 vo: {
+                    product: null,
+                    showInfoDialog: false,
                     selectRow: null,
                     showAllDialog: false,
-                    auditDialogTitle: ''
+                    auditDialogTitle: '',
+                    now: null
                 },
                 rules: {
                     content: [
@@ -172,9 +211,28 @@
         },
         computed: {},
         methods: {
+            openInfoDialog(prod){
+                this.vo.product = prod
+                this.vo.showInfoDialog = true
+            },
             getList(){
                 this.$refs.dg.reload()
                 this.vo.selectRow = null
+                this.vo.now = Date.now()
+            },
+            canUrge(prod){
+                let time = null
+                for (let i = prod.record.length - 1; i >= 0; i--) {
+                    if (prod.record[i].remark == "催单" && prod.record[i].status === null && prod.record[i].oldStatus === null) {
+                        time = prod.record[i].time
+                        break
+                    }
+                }
+                if (time && this.vo.now - time < (24 * 60 * 60 * 1000)) {
+                    return false
+                }
+                return true
+
             },
             selectChange(rows){
                 this.vo.selectRow = rows.map(item=>item._id)
@@ -195,6 +253,7 @@
             urge(productIds){
                 this.$post("/message/send", {productIds}).then(data=> {
                     this.$message("发送成功")
+                    this.getList()
                 }).catch(err=> {
                     this.$alert(err.message, {type: 'error'})
                 })
@@ -208,7 +267,7 @@
             },
             sendAllUserNotice(){
                 this.$refs.noticeForm.validate((valid) => {
-                    if(valid){
+                    if (valid) {
                         this.$post("/message/sendAll", this.po.notice).then(data=> {
                             this.$message("发送成功")
                             this.vo.showAllDialog = false
@@ -220,9 +279,11 @@
             }
         },
         mounted(){
+            this.vo.now = Date.now()
         },
         components: {
-            perview
+            perview,
+            productInfo
         },
         filters: {
             getDateString,

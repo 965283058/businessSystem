@@ -26,7 +26,19 @@ class MessageService extends BaseService {
             await message.save()
             await this.Model.Product.update(
                 {_id: {'$in': params.productList}},
-                {$inc: {urge: 1}},
+                {
+                    $inc: {urge: 1},
+                    '$push': {
+                        record: {
+                            owner: this.admin._id,
+                            time: Date.now(),
+                            oldStatus: null,
+                            status: null,
+                            remark: "催单",
+                            auditId: null,
+                        }
+                    }
+                },
                 {multi: true}
             )
             return true

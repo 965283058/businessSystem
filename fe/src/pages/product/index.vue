@@ -105,6 +105,7 @@
                   @selection-change="selectChange" :row-style="dgRowStyle">
             <el-table-column type="selection" width="55" v-if="status=='wait'||status=='fail'" key="checkbox">
             </el-table-column>
+            <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center" v-if="vo.superAdmin!=-1"></el-table-column>
             <el-table-column key="createTime" prop="createTime" label="提交时间" width="95" align="center" sortable="true">
                 <template slot-scope="scope">
                     {{scope.row.createTime|getDateTimeString}}
@@ -215,7 +216,7 @@
         </el-dialog>
 
 
-        <el-dialog width="780px" :visible.sync="vo.showInfoDialog" v-if="vo.showInfoDialog">
+        <el-dialog width="780px" :visible.sync="vo.showInfoDialog" title="商品详情">
             <productInfo :product="vo.product"></productInfo>
             <div slot="footer">
                 <el-button @click="vo.showInfoDialog = false">取 消</el-button>
