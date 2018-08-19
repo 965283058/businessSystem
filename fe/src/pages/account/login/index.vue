@@ -103,8 +103,8 @@
         data: function () {
             return {
                 po: {
-                    userName: '965283058@qq.com',
-                    pwd: '965283058@qq.com'
+                    userName: '',
+                    pwd: ''
                 },
                 vo: {
                     loginErrMsg: '',
