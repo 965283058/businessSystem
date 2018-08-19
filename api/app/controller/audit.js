@@ -7,7 +7,7 @@ const applyRule = {
     voucherImg: {type: 'string', required: true},
     accountImg: {type: 'string', required: true},
     serviceCharge: {type: 'number', required: true},//服务费
-    remark: {type: 'string', required: false},//备注
+    remark: {type: 'string', required: false, allowEmpty: true},//备注
 }
 
 const auditRule = {
