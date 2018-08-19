@@ -1,13 +1,10 @@
 <style scoped>
     .content__input-upload {
-        width: 200px;
         display: inline-block;
         margin: 0;
     }
 
     .upload-warp {
-        width: 100%;
-        height: 200px;
         position: relative;
         background: #FFFFFF;
         overflow: hidden;
@@ -16,11 +13,11 @@
     }
 
     .upload__button {
-        width: 200px;
-        height: 200px;
         position: absolute;
         left: 0;
         right: 0;
+        top:0;
+        bottom: 0;
         z-index: 2;
         cursor: pointer;
     }
@@ -105,7 +102,7 @@
 </style>
 <template>
     <div class="content__input-upload">
-        <div class="upload-warp">
+        <div class="upload-warp" :style="style">
             <div class="upload__preview"><img :src="po.url" alt=""></div>
             <div class="upload__button" :class="{'upload__button--hasImg':po.url}" :disabled="disabled">
                 <div class="upload__logo"></div>
@@ -139,7 +136,25 @@
                 }
             }
         },
+        computed: {
+            style(){
+                let w = Number.parseInt(this.width) || 200
+                let h = Number.parseInt(this.height) || 200
+                return {
+                    width: w + 'px',
+                    height: h + 'px'
+                }
+            }
+        },
         props: {
+            width: {
+                type: [String, Number],
+                default: 200
+            },
+            height: {
+                type: [String, Number],
+                default: 200
+            },
             name: String,
             accept: String,
             disabled: {
@@ -148,7 +163,6 @@
             },
             url: String
         },
-        computed: {},
         methods: {
             _showPreview(){
                 if (this.po.url) {

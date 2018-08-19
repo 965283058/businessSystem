@@ -13,12 +13,14 @@ const prodRule = {
     imgType: {type: 'enum', values: [0, 1]},//图片类型 0本地图片 1链接
     costPrice: {type: 'number', required: true, min: 0},//原价
     price: {type: 'number', required: true, min: 0},//券后价
+    commission: {type: 'number', required: true, min: 0},//佣金
     voucherLink: {type: 'string', required: true},//券链接
     orderLink: {type: 'string', required: true},//下单链接
     desc: {type: 'string', required: true},//商品文案
     serviceCharge: {type: 'number', required: true, min: 0},//服务费
     qq: {type: 'number', required: false},
-    phone: {type: 'string', required: false},//电话
+    phone: {type: 'string', required: false, allowEmpty: true},//电话
+    wx: {type: 'string', required: false, allowEmpty: true},//微信
     beginTime: {type: 'number', required: true},//开始时间
     endTime: {type: 'number', required: true},//结束时间
     remark: {type: 'string', required: false, allowEmpty: true},//备注
@@ -26,6 +28,11 @@ const prodRule = {
 
 const infoRule = {
     id: {type: 'string', required: true}
+};
+
+const cancelRule = {
+    id: {type: 'string', required: true},
+    reason: {type: 'string', required: true}
 };
 
 const scoreRule = {
@@ -76,9 +83,13 @@ class ProductController extends Controller {
         try {
             while ((part = await parts()) != null) {
                 if (part.length) {
-                    params[part[0]] = part[1]
+                    params[part[0]] = part[1] && part[1].trim()
                 } else { //保存图片文件
-                    let pullPath = await saveFile(`temp/product_${Date.now()}.${part.mime.split('/').pop()}`, part)
+                    let name = 'product_'
+                    if (part.fieldname == 'voucherImage') {
+                        name = 'voucher_'
+                    }
+                    let pullPath = await saveFile(`temp/${name}${Date.now()}.${part.mime.split('/').pop()}`, part)
                     params[part.fieldname] = pullPath
                 }
             }
@@ -89,19 +100,40 @@ class ProductController extends Controller {
                 return
             }
 
+            if (!params.id && !params.voucherImage) {//如果是新增商品，并且未上传优惠券截图
+                throw new Error("新增商品优惠券截图不能为空")
+                return
+            }
+
             if (params.id && params.imgType == 0 && params.img) {
                 params.img = params.img.replace(this.app.domian, "")
                 if (params.img.indexOf('upload/') != 0) {
-                    throw new Error("图片路径错误")
+                    throw new Error("商品图片路径错误")
                     return
                 }
             }
 
+
+            if (params.id && params.voucherImage) {
+                params.voucherImage = params.voucherImage.replace(this.app.domian, "")
+                if (params.voucherImage.indexOf('upload/') != 0) {
+                    throw new Error("商品优惠券截图路径错误")
+                    return
+                }
+            }
+
+            if (!params.phone && !params.wx) {
+                throw new Error("商家电话和微信必须填写一个")
+                return
+            }
+
             params.price = Number.parseFloat(params.price)
             params.costPrice = Number.parseFloat(params.costPrice)
+            params.commission = Number.parseFloat(params.commission)
             params.serviceCharge = Number.parseFloat(params.serviceCharge)
             params.beginTime = Number.parseInt(params.beginTime)
             params.endTime = Number.parseInt(params.endTime)
+
 
             if (params.qq) {
                 params.qq = Number.parseInt(params.qq)
@@ -122,8 +154,8 @@ class ProductController extends Controller {
             return
         }
         const {request, service} = this.ctx;
-        this.ctx.validate(infoRule, request.body);
-        let reuslt = await service.product.cancel(request.body.id)
+        this.ctx.validate(cancelRule, request.body);
+        let reuslt = await service.product.cancel(request.body)
         this.output(reuslt)
     }
 

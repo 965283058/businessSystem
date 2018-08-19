@@ -1,6 +1,6 @@
 module.exports = app => {
     app.beforeStart(async() => {
-        app.domian = app.config.env == "prod" ? "https://choujiang.58jinbao.com/" : 'http://localhost:7001/'
+        app.domian = app.config.env == "prod" ? "http://47.94.83.98/" : 'http://localhost:7001/'
         const ctx = app.createAnonymousContext();
 
 

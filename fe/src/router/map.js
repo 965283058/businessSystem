@@ -56,7 +56,7 @@ export default {
                 }
             },
             {
-                path: 'audit',
+                path: 'audit/:status',
                 meta: {
                     title: '商品审核'
                 },

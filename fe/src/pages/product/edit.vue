@@ -13,7 +13,7 @@
 </style>
 <template>
     <div class="box">
-        <el-form ref="form" :model="po" :rules="rules" label-width="80px" class="form">
+        <el-form ref="form" :model="po" :rules="rules" label-width="80px" class="form" size="mini">
             <el-form-item label="商品名称" prop="name">
                 <el-input v-model="po.name"></el-input>
             </el-form-item>
@@ -44,8 +44,18 @@
                 <el-input v-model="po.price" clearable></el-input>
             </el-form-item>
 
+            <el-form-item label="佣金" prop="commission">
+                <el-input v-model="po.commission" clearable></el-input>
+            </el-form-item>
+
             <el-form-item label="券链接" prop="voucherLink">
                 <el-input v-model="po.voucherLink" clearable></el-input>
+            </el-form-item>
+
+            <el-form-item label="券截图" prop="voucherLink">
+                <jf-upload :url="po.voucherImage" ref="voucherImageUpload" width="400" height="100">
+                    <span>查看大图</span>
+                </jf-upload>
             </el-form-item>
 
 
@@ -61,20 +71,24 @@
                 <el-input v-model="po.serviceCharge"></el-input>
             </el-form-item>
 
-            <el-form-item label="QQ" prop="qq">
+            <el-form-item label="商家QQ" prop="qq">
                 <el-input v-model="po.qq" maxlength="15"></el-input>
             </el-form-item>
 
-            <el-form-item label="电话" prop="phone">
+            <el-form-item label="商家电话" prop="phone">
                 <el-input v-model="po.phone" maxlength="11"></el-input>
+            </el-form-item>
+
+            <el-form-item label="商家微信" prop="wx">
+                <el-input v-model="po.wx" maxlength="25"></el-input>
             </el-form-item>
 
 
             <el-form-item label="活动时间" prop="time">
-                <el-date-picker type="date" placeholder="开始日期" value-format="timestamp"
+                <el-date-picker type="datetime" placeholder="开始日期" value-format="timestamp"
                                 v-model="po.beginTime"></el-date-picker>
                 <span>——</span>
-                <el-date-picker type="date" placeholder="结束时间" value-format="timestamp"
+                <el-date-picker type="datetime" placeholder="结束时间" value-format="timestamp"
                                 v-model="po.endTime"></el-date-picker>
             </el-form-item>
 
@@ -121,8 +135,15 @@
                 callback();
             };
             const checkPhone = (rule, value, callback) => {
-                if (!/^[1]\d{10}$/.test(value)) {
+                if (value && !/^[1]\d{10}$/.test(value)) {
                     return callback(new Error('手机号码格式不正确'));
+                }
+                callback();
+            };
+
+            const checkTwo = (rule, value, callback) => {
+                if (!this.po.wx && !this.po.phone) {
+                    return callback(new Error('商家电话和微信必须填写一个'));
                 }
                 callback();
             };
@@ -134,12 +155,15 @@
                     imgType: 0,//图片类型 0本地图片 1链接
                     costPrice: null,//原价
                     price: null,//券后价
+                    commission: null,//佣金
                     voucherLink: '',//券链接
+                    voucherImage: '',//券截图
                     orderLink: '',//下单链接
                     desc: '',//商品文案
                     serviceCharge: null,//服务费
                     qq: '',
                     phone: '',//电话
+                    wx: '',//微信
                     beginTime: null,//开始时间
                     endTime: null,//结束时间
                     remark: '',//备注
@@ -164,6 +188,9 @@
                     price: [
                         {required: true, message: '请输入商品券后价', trigger: 'blur'}
                     ],
+                    commission: [
+                        {required: true, message: '请输入商品券佣金', trigger: 'blur'}
+                    ],
                     voucherLink: [
                         {required: true, message: '请输入券链接', trigger: 'blur'},
                         {type: 'url', message: '券链接格式不正确', trigger: 'blur'}
@@ -183,8 +210,11 @@
                         {validator: checkQQ, trigger: 'blur'},
                     ],
                     phone: [
-                        {required: true, message: '请填写电话', trigger: 'blur'},
                         {validator: checkPhone, trigger: 'blur'},
+                        {validator: checkTwo, trigger: 'blur'},
+                    ],
+                    wx: [
+                        {validator: checkTwo, trigger: 'blur'},
                     ],
                     time: [
                         {validator: checkTime, required: true, trigger: 'change'}
@@ -252,12 +282,20 @@
                             }
                         }
 
-
                         if (files && files.length) {
                             fd.append("img", files[0])
                         }
+
+
+                        let voucherImageFiles = this.$refs.voucherImageUpload.$el.querySelector('input[type=file]').files
+                        if (voucherImageFiles && voucherImageFiles.length) {
+                            fd.append("voucherImage", voucherImageFiles[0])
+                        } else if (!this.po.id || (this.po.id && !this.po.voucherImage)) {
+                            return this.$message.error("请选择商品券截图")
+                        }
+
                         Object.keys(this.po).forEach(key=> {
-                            if (!(key == "img" && this.po.imgType == 0)) {
+                            if (!fd.has(key)) {
                                 fd.append(key, this.po[key])
                             }
                         })
@@ -286,7 +324,9 @@
                             this.vo.mode = 'edit'
                             Object.keys(this.po).forEach(key=> {
                                 if (key !== "img") {
-                                    this.po[key] = info[key]
+                                    if (!(!info[key] && info[key] !== 0)) {
+                                        this.po[key] = info[key]
+                                    }
                                 } else {
                                     this.po[key] = info.img[0]
                                 }
@@ -303,6 +343,7 @@
                 if (this.$refs.upload) {
                     this.$refs.upload.reset()
                 }
+                this.$refs.voucherImageUpload.reset()
                 this.po = JSON.parse(JSON.stringify(this.poClone))
             },
             cancel(){

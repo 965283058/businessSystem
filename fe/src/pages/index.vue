@@ -76,6 +76,7 @@
     }
 
     .left-menu {
+        height: 100%;
         background: #46425a;
         overflow-x: hidden;
     }
@@ -162,8 +163,7 @@
 <template>
     <div class="base-warp">
         <div class="jf-header">
-            <span class="jf-header__title">厚本福利平台管理系统</span>
-            <!--<span class="jf-header__title">招商系统管理平台</span>-->
+            <span class="jf-header__title">招商业绩登记平台</span>
             <el-dropdown class="jf-user-menu">
                 <span>{{admin.job}}-{{admin.name}}<i class="el-icon-caret-bottom el-icon--right"></i></span>
                 <el-dropdown-menu slot="dropdown">
@@ -174,7 +174,7 @@
         </div>
         <el-row class="jf-content">
             <div class="jf-menus">
-                <el-menu default-active="2" class="el-menu-vertical-demo jf-layout left-menu">
+                <el-menu default-active="2" class="el-menu-vertical-demo left-menu">
                     <template v-for="(menu,index) in menus">
                         <el-submenu :index="index+''" v-if="menu.children&&menu.children.length"
                                     class="left-menu__item">

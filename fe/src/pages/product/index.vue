@@ -16,10 +16,13 @@
         line-height: 65px;
         padding-left: 50px;
     }
-    .text-warn{
+
+    .text-warn {
         display: inline-block;
         line-height: 65px;
         margin-left: 50px;
+        color: #e11920;
+        font-weight: bold;
     }
 
     .product__img {
@@ -27,13 +30,23 @@
     }
 
     .dg__button {
-        width: 110px;
         text-align: center;
-        line-height: 24px;
-        border: 1px solid #3bc1a6;
-        border-radius: 24px;
-        background: transparent;
-        margin: 5px 0;
+        font-size: 16px;
+        line-height: 26px;
+        color: #0028ff;
+        cursor: pointer;
+    }
+
+    .dg__button--red {
+        color: #e11920;
+    }
+
+    .dg__button--green {
+        color: #259b24;
+    }
+
+    .dg-img__see {
+        color: blue;
     }
 
     .time_join {
@@ -69,6 +82,10 @@
         padding-left: 30px;
     }
 
+    .cell a {
+        word-break: break-all;
+    }
+
     .cell__caption {
         width: 80px;
         flex-shrink: 0;
@@ -80,59 +97,88 @@
     <div class="content-box">
         <div class="top">
             <el-button type="success" size="small" @click="getList">刷新</el-button>
-            <el-button type="primary" size="small" @click="apply" v-if="hasPower('audit_apply')&&vo.showApply">提交申请</el-button>
-            <p class="text-warn">黄色背景的为管理员催单，请尽快提交</p>
+            <el-button type="primary" size="small" @click="apply" v-if="hasPower('audit_apply')&&vo.showApply">批量结算申请
+            </el-button>
+            <p class="text-warn">注意：背景色的为黄色置顶的，请尽快申请结算！</p>
         </div>
-        <DataGrid url="/product/list" :firstLoad="false" :params="po.params" ref="dg"
+        <DataGrid url="/product/list" :firstLoad="false" :params="po.params" ref="dg" :fit="true" size="mini"
                   @selection-change="selectChange" :row-style="dgRowStyle">
             <el-table-column type="selection" width="55" v-if="status=='wait'||status=='fail'" key="checkbox">
             </el-table-column>
-            <el-table-column prop="name" label="名称" width="180" header-align="center"></el-table-column>
-            <el-table-column label="图片" width="140" align="center">
+            <el-table-column key="createTime" label="提交时间" width="95" align="center">
+                <template slot-scope="scope">
+                    {{scope.row.createTime|getDateTimeString}}
+                </template>
+            </el-table-column>
+            <el-table-column key="img" label="图片" width="140" align="center">
                 <template slot-scope="scope">
                     <perview class="form__img-box">
-                        <img class="product__img" :src="scope.row.img[0]" alt="点击查看大图" title="点击查看大图">
+                        <a :href="scope.row.orderLink" target="_blank" @click.stop>
+                            <img class="product__img" :src="scope.row.img[0]" alt="图片无法查看" title="点击查看商品">
+                        </a>
+                        <h5 class="dg-img__see">查看图片</h5>
                     </perview>
                 </template>
             </el-table-column>
-            <el-table-column prop="costPrice" label="原价" width="100" header-align="center"
-                             align="right"></el-table-column>
-            <el-table-column prop="price" label="券后价" width="100" header-align="center" align="right"></el-table-column>
-            <el-table-column prop="voucherLink" label="券链接" width="280" header-align="center"></el-table-column>
-            <el-table-column prop="orderLink" label="下单链接" width="280" header-align="center"></el-table-column>
-            <el-table-column prop="desc" label="商品文案" width="180" header-align="center"></el-table-column>
-            <el-table-column prop="serviceCharge" label="服务费" width="100" header-align="center"
-                             align="right"></el-table-column>
-            <el-table-column prop="qq" label="QQ" width="100" header-align="center"></el-table-column>
-            <el-table-column prop="phone" label="电话" width="180" header-align="center"></el-table-column>
-            <el-table-column label="活动时间" width="200" align="center">
+            <el-table-column key="name" prop="name" label="名称" width="240" header-align="center"></el-table-column>
+            <el-table-column key="active" label="活动时间" width="200" align="center">
                 <template slot-scope="scope">
-                    {{scope.row.beginTime|getDateString}}<span class="time_join">至</span>{{scope.row.endTime|getDateString}}
+                    <div>{{scope.row.beginTime|getDateTimeString}}</div>
+                    <span class="time_join">至</span>
+                    <div>{{scope.row.endTime|getDateTimeString}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" width="180" header-align="center"></el-table-column>
-
-            <el-table-column label="操作" width="135" align="center" fixed="right"
-                             v-if="status=='wait'||status=='fail'||status=='done'" key="setting">
+            <el-table-column key="price" prop="price" label="券后价" width="100" align="center"></el-table-column>
+            <el-table-column key="commission" label="佣金" width="100" align="center">
                 <template slot-scope="scope">
-                    <button class="dg__button" @click="toEdit(scope.row)" v-if="hasPower('product_edit')&&(status=='wait'||status=='fail')">
-                        修改
-                    </button>
-                    <button class="dg__button" @click="openAuditDialog(scope.row._id)" v-if="status=='fail'">查看驳回原因
-                    </button>
-                    <button class="dg__button" @click="openAuditDialog(scope.row._id)" v-if="status=='done'">查看审核信息
-                    </button>
+                    <div>{{scope.row.commission+'%'}}</div>
+                </template>
+            </el-table-column>
+            <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
+                             align="center"></el-table-column>
+            <el-table-column key="remark" prop="remark" label="备注" min-width="280"
+                             header-align="center"></el-table-column>
 
-                    <button class="dg__button" @click="cancel(scope.row)" v-if="hasPower('product_cancel')">
+            <el-table-column key="cancelReason" label="取消理由" min-width="280" header-align="center"
+                             v-if="status=='cancel'">
+                <template slot-scope="scope">
+                    <div>{{getCancelReason(scope.row)}}</div>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
+                <template slot-scope="scope">
+                    <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
+                    <p class="dg__button dg__button--red" @click="toEdit(scope.row)"
+                       v-if="hasPower('product_edit')&&(status=='wait'||status=='fail')">
+                        修改
+                    </p>
+                    <p class="dg__button" @click="openAuditDialog(scope.row._id)" v-if="status=='fail'">查看驳回原因
+                    </p>
+                    <p class="dg__button dg__button--green" @click="apply(false,scope.row)"
+                       v-if="vo.showApply&&hasPower('audit_apply')">
+                        {{status=='wait'?'申请结算':'重新提交申请'}}
+                    </p>
+
+                    <p class="dg__button dg__button--green" @click="openAuditDialog(scope.row._id)"
+                       v-if="status=='auditing'">查看结算申请
+                    </p>
+
+                    <p class="dg__button dg__button--green" @click="openAuditDialog(scope.row._id)"
+                       v-if="status=='done'">查看结算信息
+                    </p>
+
+                    <p class="dg__button dg__button--red" @click="cancel(scope.row)"
+                       v-if="(status=='fail'||status=='wait')&&hasPower('product_cancel')">
                         取消活动
-                    </button>
+                    </p>
 
                 </template>
             </el-table-column>
         </DataGrid>
 
-        <el-dialog width=" 780px
-                    " :visible.sync="vo.showApplyDialog" v-if="vo.showApply&&vo.showApplyDialog">
+        <el-dialog width="780px" :visible.sync="vo.showApplyDialog" v-if="vo.showApply&&vo.showApplyDialog">
             <el-form ref="form" :model="po.apply" :rules="rules" label-width="80px" class="form">
                 <el-form-item label="上传图片">
                     <div class="form__img-box">
@@ -165,6 +211,14 @@
             <div slot="footer">
                 <el-button @click="vo.showApplyDialog = false">取 消</el-button>
                 <el-button type="primary" @click="applySubmit">确 定</el-button>
+            </div>
+        </el-dialog>
+
+
+        <el-dialog width="780px" :visible.sync="vo.showInfoDialog" v-if="vo.showInfoDialog">
+            <productInfo :product="vo.product"></productInfo>
+            <div slot="footer">
+                <el-button @click="vo.showInfoDialog = false">取 消</el-button>
             </div>
         </el-dialog>
 
@@ -207,7 +261,7 @@
                         <div>{{vo.auditInfo.remark}}</div>
                     </div>
                 </el-collapse-item>
-                <el-collapse-item title="审核信息" name="audit">
+                <el-collapse-item title="审核信息" name="audit" v-if="vo.auditInfo.auditor">
                     <div class="cell">
                         <label class="cell__caption">审核人：</label>
                         <div>{{vo.auditInfo.auditor.name}}</div>
@@ -225,6 +279,11 @@
                         <div>{{vo.auditInfo.notes}}</div>
                     </div>
                 </el-collapse-item>
+                <el-collapse-item title="审核信息" name="audit" v-else>
+                    <div class="cell">
+                        正在审核中....
+                    </div>
+                </el-collapse-item>
             </el-collapse>
             <div slot="footer">
                 <el-button @click="vo.showAuditDialog=false">关闭</el-button>
@@ -236,6 +295,7 @@
 <script>
     import {getDateTimeString, getDateString} from 'utils'
     import  perview from 'components/perview'
+    import  productInfo from 'components/productInfo'
 
     export default {
         data(){
@@ -256,12 +316,16 @@
                 },
                 vo: {
                     selectItem: [],
+                    product: null,
+                    showInfoDialog: false,
+
+
                     showApply: false,
                     showApplyDialog: false,
                     showAuditDialog: false,
                     auditInfo: null,
                     superAdmin: -1,
-                    admin:null
+                    admin: null
                 },
                 rules: {
                     serviceCharge: [
@@ -317,31 +381,52 @@
                 }
                 return '';
             },
+            openInfoDialog(prod){
+                this.vo.product = prod
+                this.vo.showInfoDialog = true
+            },
             toEdit(item){
                 window.sessionStorage.setItem("productInfo", JSON.stringify(item))
                 this.$router.push(`/product/edit/${item._id}`)
             },
+            getCancelReason(row){
+                let reason
+                for (let i = row.record.length - 1; i >= 0; i--) {
+                    if (row.record[i].status == -10) {
+                        reason = row.record[i].remark
+                        break
+                    }
+                }
+                return reason
+            },
             cancel(info){
-                this.$confirm(`您确定要商品【${info.name}】的活动吗，该操作不可逆?`, '操作确认', {
+                this.$prompt(`您确定要商品【${info.name}】的活动吗，该操作不可逆?`, '操作确认', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$post("/product/cancel", {id: info._id}).then(data=> {
+                    inputPattern: /^.+$/,
+                    inputPlaceholder: '取消原因',
+                    inputErrorMessage: '请输入取消原因！'
+                }).then(({value}) => {
+                    this.$post("/product/cancel", {id: info._id, reason: value}).then(data=> {
                         this.getList()
                         return this.$message.info("操作成功！")
                     }).catch(err=> {
                         this.$alert(err.message, {type: 'error'})
                     })
-                }).catch(() => {
-                    info.status = Math.abs(info.status - 1)
-                });
+                }).catch(()=> {
+                })
             },
             selectChange(selected){
                 this.vo.selectItem = selected
             },
-            apply(){
-                if (this.vo.selectItem.length == 0) {
+            apply(multiple = true, product = null){
+                if (!multiple) {//如果单独提交
+                    this.vo.selectItem = [];
+                    this.vo.selectItem.push(product)
+
+                    this.$refs.dg.$refs.table.clearSelection()
+                }
+                if (multiple && this.vo.selectItem.length == 0) {
                     return this.$message("未选中任何行")
                 }
                 this.vo.showApplyDialog = true
@@ -356,8 +441,6 @@
                 if (!voucherImgFileInput.files || !voucherImgFileInput.files.length) {
                     return this.$message.error("请选择优惠券截图")
                 }
-
-
                 let accountImgFileInput = this.$refs.accountImg.$el.querySelector('input[type=file]')
                 if (!accountImgFileInput.files || !accountImgFileInput.files.length) {
                     return this.$message.error("请选择到账截图")
@@ -440,7 +523,10 @@
         mounted(){
             this.init()
         },
-        components: {perview},
+        components: {
+            perview,
+            productInfo
+        },
         filters: {
             getDateString,
             getDateTimeString

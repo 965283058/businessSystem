@@ -82,7 +82,10 @@
   "defaultLocale": "/Users/jiangpeng/Project/businessSystem/api/config/config.default.js",
   "mongoose": {
     "url": "/Users/jiangpeng/Project/businessSystem/api/config/config.default.js",
-    "options": "/Users/jiangpeng/Project/businessSystem/api/config/config.default.js",
+    "options": {
+      "auto_reconnect": "/Users/jiangpeng/Project/businessSystem/api/config/config.default.js",
+      "poolSize": "/Users/jiangpeng/Project/businessSystem/api/config/config.default.js"
+    },
     "loadModel": "/Users/jiangpeng/Project/businessSystem/api/node_modules/egg-mongoose/config/config.default.js",
     "app": "/Users/jiangpeng/Project/businessSystem/api/node_modules/egg-mongoose/config/config.default.js",
     "agent": "/Users/jiangpeng/Project/businessSystem/api/node_modules/egg-mongoose/config/config.default.js"

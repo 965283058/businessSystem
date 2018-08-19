@@ -1,8 +1,6 @@
 const BaseService = require('../core/baseService');
 const {moveFile, delFile} = require("../utils/upload")
 
-const dayTime = 24 * 60 * 60 * 1000 - 1
-
 
 const getDateString = function (time) {
     let date = new Date(time)
@@ -48,6 +46,8 @@ class ProductService extends BaseService {
                 if (item.imgType == 0) {
                     item.img[0] = `${this.app.domian}${item.img[0]}`
                 }
+                item.voucherImage = item.voucherImage ? `${this.app.domian}${item.voucherImage}` : null
+
                 item.price = item.price.toFixed(2)
                 item.serviceCharge = item.serviceCharge.toFixed(2)
                 item.costPrice = item.costPrice.toFixed(2)
@@ -67,15 +67,17 @@ class ProductService extends BaseService {
             imgType: info.imgType,//图片类型 0本地图片 1链接
             costPrice: info.costPrice,//原价
             price: info.price,//券后价
+            commission: info.commission,//佣金
             voucherLink: info.voucherLink,//券链接
             orderLink: info.orderLink,//下单链接
             desc: info.desc,//商品文案
             serviceCharge: info.serviceCharge,//服务费
             qq: info.qq,
             phone: info.phone,//电话
+            wx: info.wx,//电话
             status: 0, //0 待结算 1已结算 -1已驳回  -10 已取消
             beginTime: info.beginTime,//开始时间
-            endTime: info.endTime + dayTime,//结束时间
+            endTime: info.endTime,//结束时间
             endDate: getDateString(info.endTime),
             remark: info.remark,//备注
             createTime: Date.now(),//创建日期
@@ -83,31 +85,54 @@ class ProductService extends BaseService {
         }
 
         try {
+            let dayNum = getDateNum()
             if (info.id) {
                 let prod = await this.Model.Product.findOne({"_id": info.id})
-                if (prod.createor != this.admin._id) {
+                if (this.admin.superAdmin == -1 && prod.createor != this.admin._id) {
                     return new Error("您无权修改此商品")
                 }
 
+                data.status = prod.status
+
+
+                //处理商品图片
                 if (prod.imgType == 0 && info.img != prod.img[0]) {//如果以前是本地图片，且本次上传变化了
                     await delFile(prod.img[0])
-                }
-
-
-                if (info.imgType == 0) {//如果新上传的是本地图片
-                    let prodImg = await moveFile(info.img, `product/${getDateNum()}/${info.img.split('/').pop()}`)
+                    let prodImg = await moveFile(info.img, `product/${dayNum}/${info.img.split('/').pop()}`)
                     data.img = [prodImg]
                 }
 
+
+                //处理商品优惠截图
+                if (prod.voucherImage != info.voucherImage) {//如果以前优惠截图是重新上传变化了
+                    await delFile(prod.voucherImage)
+                    let voucherImage = await moveFile(info.voucherImage, `voucher/${dayNum}/${info.voucherImage.split('/').pop()}`)
+                    data.voucherImage = voucherImage
+                }
+
                 await this.Model.Product.update({"_id": info.id}, {
-                    "$set": data
+                    "$set": data,
+                    '$push': {
+                        record: {
+                            owner: this.admin._id,
+                            time: Date.now(),
+                            oldStatus: prod.status,
+                            status: data.status,
+                            remark: "修改",
+                            auditId: null,
+                        }
+                    }
                 })
 
             } else {
                 if (info.imgType == 0) {
-                    let prodImg = await moveFile(info.img, `product/${getDateNum()}/${info.img.split('/').pop()}`)
+                    let prodImg = await moveFile(info.img, `product/${dayNum}/${info.img.split('/').pop()}`)
                     data.img = [prodImg]
                 }
+
+                let voucherImage = await moveFile(info.voucherImage, `voucher/${dayNum}/${info.voucherImage.split('/').pop()}`)
+                data.voucherImage = voucherImage
+
                 data.record = []
                 let prod = new this.Model.Product(data)
                 await prod.save()
@@ -118,18 +143,30 @@ class ProductService extends BaseService {
         }
     }
 
-    async cancel(id, status) {
+    async cancel(parmas) {
         try {
-            let prod = await this.Model.Product.findOne({"_id": id})
+            let prod = await this.Model.Product.findOne({"_id": parmas.id})
             if (prod) {
-                if (prod.createor != this.admin._id) {
+                if (this.admin.subperAdmin == -1 && prod.createor != this.admin._id) {
                     return new Error("您无权修改此商品")
                 }
                 if (prod.status != 0 && prod.status != -1) {
-                    return new Error("该商品状态更改")
+                    return new Error("该商品状态无法更改")
                 }
-                await this.Model.Product.update({"_id": id}, {
-                    "$set": {status: -10}
+                await this.Model.Product.update({"_id": parmas.id}, {
+                    "$set": {
+                        status: -10
+                    },
+                    '$push': {
+                        record: {
+                            owner: this.admin._id,
+                            time: Date.now(),
+                            oldStatus: prod.status,
+                            status: -10,
+                            remark: parmas.reason,
+                            auditId: null
+                        }
+                    }
                 })
                 return true
             } else {
@@ -152,7 +189,7 @@ class ProductService extends BaseService {
                 }
                 let lastAuditId
                 for (let i = prod.record.length - 1; i >= 0; i--) {//查询到最后一次审核记录
-                    if (prod.record[i].status == 2 || prod.record[i].status == -1) {
+                    if (prod.record[i].auditId) {
                         lastAuditId = prod.record[i].auditId
                         break;
                     }

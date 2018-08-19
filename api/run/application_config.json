@@ -175,14 +175,20 @@
       "mapping": {}
     },
     "mongoose": {
-      "url": "mongodb://127.0.0.1/businessSystem",
-      "options": {},
+      "url": "mongodb://localhost/businessSystem",
+      "options": {
+        "auto_reconnect": true,
+        "poolSize": 5
+      },
       "loadModel": true,
       "app": true,
       "agent": false,
       "client": {
-        "url": "mongodb://127.0.0.1/businessSystem",
-        "options": {}
+        "url": "mongodb://localhost/businessSystem",
+        "options": {
+          "auto_reconnect": true,
+          "poolSize": 5
+        }
       }
     },
     "redis": {

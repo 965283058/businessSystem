@@ -5,4 +5,5 @@ package-lock.json
 logs
 api/upload/apply/*
 api/upload/product/*
+api/upload/voucher/*
 api/upload/temp/*

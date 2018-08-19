@@ -72,49 +72,62 @@
 <template>
     <div class="content-box">
         <div class="top">
-            <label>审核状态：</label>
-            <div class="search__result">
-                <el-checkbox-group v-model="po.result">
-                    <el-checkbox :label="-1">未审核</el-checkbox>
-                    <el-checkbox :label="0">已驳回</el-checkbox>
-                    <el-checkbox :label="1">审核通过</el-checkbox>
-                </el-checkbox-group>
-            </div>
+            <!-- <label>审核状态：</label>
+             <div class="search__result">
+                 <el-checkbox-group v-model="po.result">
+                     <el-checkbox :label="-1">未审核</el-checkbox>
+                     <el-checkbox :label="0">已驳回</el-checkbox>
+                     <el-checkbox :label="1">审核通过</el-checkbox>
+                 </el-checkbox-group>
+             </div>-->
             <div>
-                <el-button class="search__button" type="success" size="small" @click="getList">查询</el-button>
+                <el-button class="search__button" type="success" size="small" @click="getList">刷新</el-button>
             </div>
         </div>
-        <DataGrid url="/audit/list" :stripe="true" :params="po.params" ref="dg" size="mini">
+        <DataGrid url="/audit/list" :firstLoad="false" :stripe="true" :params="po.params" ref="dg" size="mini">
             <el-table-column type="expand" label="查看商品" width="80">
                 <template slot-scope="props">
                     <el-table :data="props.row.productList" size="mini">
-                        <el-table-column prop="name" label="名称" width="180" header-align="center"></el-table-column>
-                        <el-table-column label="图片" width="140" align="center">
+                        <el-table-column key="createTime" label="提交时间" width="145" align="center">
+                            <template slot-scope="scope">
+                                {{scope.row.createTime|getDateTimeString}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column key="img" label="图片" width="140" align="center">
                             <template slot-scope="scope">
                                 <perview class="form__img-box">
-                                    <img class="product__img" :src="scope.row.img[0]" alt="">
+                                    <a :href="scope.row.orderLink" target="_blank" @click.stop>
+                                        <img class="product__img" :src="scope.row.img[0]" alt="图片无法查看" title="点击查看商品">
+                                    </a>
+                                    <h5 class="dg-img__see">查看图片</h5>
                                 </perview>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="costPrice" label="原价" width="100" header-align="center"
-                                         align="right"></el-table-column>
-                        <el-table-column prop="price" label="券后价" width="100" header-align="center"
-                                         align="right"></el-table-column>
-                        <el-table-column prop="voucherLink" label="券链接" width="280"
+                        <el-table-column key="name" prop="name" label="名称" width="240"
                                          header-align="center"></el-table-column>
-                        <el-table-column prop="orderLink" label="下单链接" width="280"
-                                         header-align="center"></el-table-column>
-                        <el-table-column prop="desc" label="商品文案" width="180" header-align="center"></el-table-column>
-                        <el-table-column prop="serviceCharge" label="服务费" width="100" header-align="center"
-                                         align="right"></el-table-column>
-                        <el-table-column prop="qq" label="QQ" width="100" header-align="center"></el-table-column>
-                        <el-table-column prop="phone" label="电话" width="180" header-align="center"></el-table-column>
-                        <el-table-column label="活动时间" width="200" align="center">
+                        <el-table-column key="active" label="活动时间" width="200" align="center">
                             <template slot-scope="scope">
-                                {{scope.row.beginTime|getDateString}}<span class="time_join">至</span>{{scope.row.endTime|getDateString}}
+                                <div>{{scope.row.beginTime|getDateTimeString}}</div>
+                                <span class="time_join">至</span>
+                                <div>{{scope.row.endTime|getDateTimeString}}</div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="remark" label="备注" width="180" header-align="center"></el-table-column>
+                        <el-table-column key="price" prop="price" label="券后价" width="100"
+                                         align="center"></el-table-column>
+                        <el-table-column key="commission" label="佣金" width="100" align="center">
+                            <template slot-scope="scope">
+                                <div>{{scope.row.commission+'%'}}</div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
+                                         align="center"></el-table-column>
+                        <el-table-column key="remark" prop="remark" label="备注" min-width="280"
+                                         header-align="center"></el-table-column>
+                        <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
+                            <template slot-scope="scope">
+                                <button class="product__button" @click="openInfoDialog(scope.row)">查看详情</button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </template>
             </el-table-column>
@@ -138,6 +151,8 @@
                     {{scope.row.result==-1?'未审核':scope.row.result==1?'审核通过':'已驳回'}}
                 </template>
             </el-table-column>
+
+            <el-table-column key="notes" prop="notes" label="驳回原因" min-width="200" header-align="center" v-if="status=='fail'"></el-table-column>
 
             <el-table-column label="操作" align="center" key="setting">
                 <template slot-scope="scope">
@@ -228,19 +243,26 @@
                 <el-button @click="reset">关闭</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog title="商品详情" width="780px" :visible.sync="vo.showInfoDialog" v-if="vo.showInfoDialog">
+            <productInfo :product="vo.product"></productInfo>
+            <div slot="footer">
+                <el-button @click="vo.showInfoDialog = false">取 消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import {getDateTimeString, getDateString} from 'utils'
     import  perview from 'components/perview'
+    import  productInfo from 'components/productInfo'
     export default {
         data(){
             return {
                 po: {
-                    result: [-1],
                     params: {
-                        result: -1
+                        result: null
                     },
                     audit: {
                         id: '',
@@ -251,7 +273,9 @@
                 vo: {
                     selectRow: null,
                     showAuditDialog: false,
-                    auditDialogTitle: ''
+                    auditDialogTitle: '',
+                    product: null,
+                    showInfoDialog: false,
                 },
                 rules: {
                     serviceCharge: [
@@ -260,8 +284,26 @@
                 }
             }
         },
-        computed: {},
+        computed: {
+            status(){
+                return this.$route.params.status
+            }
+        },
         methods: {
+            init(){
+                switch (this.status) {
+                    case 'wait':
+                        this.po.params.result = -1
+                        break;
+                    case 'fail':
+                        this.po.params.result = 0
+                        break;
+                    case 'done':
+                        this.po.params.result = 1
+                        break;
+                }
+                this.getList()
+            },
             getList(){
                 this.$refs.dg.reload()
             },
@@ -302,20 +344,30 @@
                 }).catch(() => {
                 });
             },
+            openInfoDialog(prod){
+                this.vo.product = prod
+                this.vo.showInfoDialog = true
+            },
+        },
+        beforeRouteUpdate (to, from, next) {// 在当前路由改变，但是该组件被复用时调用
+            this.$nextTick(this.init)
+            next()
         },
         mounted(){
+            this.init()
         },
         components: {
-            perview
+            perview,
+            productInfo
         },
         filters: {
             getDateString,
             getDateTimeString
         },
         watch: {
-            'po.result': function (val) {
-                this.po.params.result = val.join(',')
-            }
+            /* 'po.result': function (val) {
+             this.po.params.result = val.join(',')
+             }*/
         }
     }
 </script>

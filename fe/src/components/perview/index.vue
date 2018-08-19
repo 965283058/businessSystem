@@ -27,6 +27,7 @@
         <div @click="showPreview">
             <slot></slot>
         </div>
+        <slot name="text"></slot>
         <div class="preview__dialog" v-if="show" @click="show=false">
             <img :src="src" alt="" @click.stop>
         </div>

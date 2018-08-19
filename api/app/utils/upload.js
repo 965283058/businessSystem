@@ -41,6 +41,9 @@ exports.moveFile = async(oldPath, newPath)=> {
 
 
 exports.delFile = (filePath)=> {
+    if(!filePath){
+        return Promise.resolve()
+    }
     return new Promise((rev, rej)=> {
         filePath = path.join(baseDir, filePath)
         fs.access(filePath, function (err, result) {
