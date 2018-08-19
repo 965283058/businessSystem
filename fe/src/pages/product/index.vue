@@ -105,7 +105,6 @@
                   @selection-change="selectChange" :row-style="dgRowStyle">
             <el-table-column type="selection" width="55" v-if="status=='wait'||status=='fail'" key="checkbox">
             </el-table-column>
-            <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center" v-if="vo.superAdmin!=-1"></el-table-column>
             <el-table-column key="createTime" prop="createTime" label="提交时间" width="95" align="center" sortable="true">
                 <template slot-scope="scope">
                     {{scope.row.createTime|getDateTimeString}}
@@ -137,6 +136,8 @@
             </el-table-column>
             <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                              align="center"></el-table-column>
+            <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
+                             header-align="center"></el-table-column>
             <el-table-column key="remark" prop="remark" label="备注" min-width="280"
                              header-align="center"></el-table-column>
 
@@ -146,8 +147,7 @@
                     <div>{{getCancelReason(scope.row)}}</div>
                 </template>
             </el-table-column>
-
-
+            <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center" v-if="vo.superAdmin!=-1"></el-table-column>
             <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
                 <template slot-scope="scope">
                     <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
@@ -179,7 +179,7 @@
             </el-table-column>
         </DataGrid>
 
-        <el-dialog width="780px" :visible.sync="vo.showApplyDialog" v-if="vo.showApply&&vo.showApplyDialog">
+        <el-dialog width="780px" title="申请结算" :close-on-click-modal="false" :visible.sync="vo.showApplyDialog" v-if="vo.showApply&&vo.showApplyDialog">
             <el-form ref="form" :model="po.apply" :rules="rules" label-width="80px" class="form">
                 <el-form-item label="上传图片">
                     <div class="form__img-box">

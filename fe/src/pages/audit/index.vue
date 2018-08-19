@@ -121,6 +121,8 @@
                         </el-table-column>
                         <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                                          align="center"></el-table-column>
+                        <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
+                                         header-align="center"></el-table-column>
                         <el-table-column key="remark" prop="remark" label="备注" min-width="280"
                                          header-align="center"></el-table-column>
                         <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
@@ -129,13 +131,6 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                </template>
-            </el-table-column>
-
-
-            <el-table-column label="申请人" align="center">
-                <template slot-scope="scope">
-                    {{scope.row.applyUser.name}}
                 </template>
             </el-table-column>
             <el-table-column label="申请时间" align="center">
@@ -151,9 +146,13 @@
                     {{scope.row.result==-1?'未审核':scope.row.result==1?'审核通过':'已驳回'}}
                 </template>
             </el-table-column>
-
-            <el-table-column key="notes" prop="notes" label="驳回原因" min-width="200" header-align="center" v-if="status=='fail'"></el-table-column>
-
+            <el-table-column key="notes" prop="notes" label="驳回原因" min-width="200" header-align="center"
+                             v-if="status=='fail'"></el-table-column>
+            <el-table-column label="申请人" align="center">
+                <template slot-scope="scope">
+                    {{scope.row.applyUser.name}}
+                </template>
+            </el-table-column>
             <el-table-column label="操作" align="center" key="setting">
                 <template slot-scope="scope">
                     <button class="product__button" @click="audit(scope.row)" v-if="scope.row.result==-1">审核</button>
@@ -203,12 +202,13 @@
                     </template>
                 </el-collapse-item>
                 <el-collapse-item title="审核信息" name="audit" v-if="vo.selectRow">
-                    <el-form :model="po.audit" label-width="80px" v-if="vo.selectRow.result == -1">
+                    <el-form ref="auditForm" :model="po.audit" label-width="80px" v-if="vo.selectRow.result == -1"
+                             :rules="auditRule">
                         <el-form-item label="审核结果">
                             <el-radio v-model="po.audit.result" :label="1">通过</el-radio>
                             <el-radio v-model="po.audit.result" :label="0">驳回</el-radio>
                         </el-form-item>
-                        <el-form-item label="备注">
+                        <el-form-item :label="po.audit.result==1?'备注':'驳回理由'" prop="notes">
                             <el-input type="textarea" v-model="po.audit.notes" rows="4"></el-input>
                         </el-form-item>
                     </el-form>
@@ -259,6 +259,13 @@
     import  productInfo from 'components/productInfo'
     export default {
         data(){
+            const checkNote = (rule, value, callback) => {
+                if (this.po.audit.result == 0 && !value.trim()) {
+                    return callback(new Error('请输入驳回理由！'));
+                }
+                callback();
+            };
+
             return {
                 po: {
                     params: {
@@ -281,6 +288,11 @@
                     serviceCharge: [
                         {required: true, message: '请输入服务费用', trigger: 'blur'}
                     ],
+                },
+                auditRule: {
+                    notes: [
+                        {required: true, validator: checkNote, trigger: 'blur'},
+                    ]
                 }
             }
         },
@@ -328,21 +340,25 @@
                 }
             },
             auditSubmit(){
-                this.$confirm(`您确定要【${this.po.audit.result == 1 ? '审核通过' : '驳回申请'}】吗?`, '操作确认', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.po.audit.id = this.vo.selectRow._id
-                    this.$post("/audit/do", this.po.audit).then(data=> {
-                        this.$message("审核成功", {type: 'success'})
-                        this.getList()
-                        this.reset()
-                    }).catch(err=> {
-                        this.$alert(err.message, {type: 'error'})
-                    })
-                }).catch(() => {
-                });
+                this.$refs.auditForm.validate((valid) => {
+                    if (valid) {
+                        this.$confirm(`您确定要【${this.po.audit.result == 1 ? '审核通过' : '驳回申请'}】吗?`, '操作确认', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.po.audit.id = this.vo.selectRow._id
+                            this.$post("/audit/do", this.po.audit).then(data=> {
+                                this.$message("审核成功", {type: 'success'})
+                                this.getList()
+                                this.reset()
+                            }).catch(err=> {
+                                this.$alert(err.message, {type: 'error'})
+                            })
+                        }).catch(() => {
+                        });
+                    }
+                })
             },
             openInfoDialog(prod){
                 this.vo.product = prod

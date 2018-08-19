@@ -135,6 +135,8 @@
             </el-table-column>
             <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                              align="center"></el-table-column>
+            <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
+                             header-align="center"></el-table-column>
             <el-table-column key="remark" prop="remark" label="备注" min-width="280"
                              header-align="center"></el-table-column>
 

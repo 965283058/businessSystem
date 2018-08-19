@@ -12,15 +12,15 @@ const applyRule = {
 
 const auditRule = {
     id: {type: 'string', required: true},
-    result: {type: 'enum', values: [0, 1]},//图片类型 0驳回 1通过
-    notes: {type: 'string', required: false},
+    result: {type: 'enum', values: [0, 1]},//审核结果 0驳回 1通过
+    notes: {type: 'string', required: false, allowEmpty: true},
 }
 
 
 const listRule = {
     page: {type: 'int', required: true},
     rows: {type: 'int', required: true},
-    result: {type: "string", required: false},
+    result: {type: "string", required: false, allowEmpty: true},
 }
 
 const infoRule = {
@@ -36,6 +36,10 @@ class AuditController extends Controller {
         }
         const {request, service} = this.ctx;
         this.ctx.validate(auditRule, request.body);
+        if (request.body.result == 0 && !request.body.notes) {
+            throw new Error("请填写驳回理由")
+            return
+        }
         let reuslt = await service.audit.do(request.body)
         this.output(reuslt)
     }
