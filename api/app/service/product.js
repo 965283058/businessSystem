@@ -87,8 +87,6 @@ class ProductService extends BaseService {
             endTime: info.endTime,//结束时间
             endDate: getDateString(info.endTime),
             remark: info.remark,//备注
-            createTime: Date.now(),//创建日期
-            createor: this.admin._id
         }
 
         try {
@@ -107,7 +105,7 @@ class ProductService extends BaseService {
                     await delFile(prod.img[0])
                 }
 
-                if(info.imgType == 0){//新上传图片
+                if (info.imgType == 0) {//新上传图片
                     let prodImg = await moveFile(info.img, `product/${dayNum}/${info.img.split('/').pop()}`)
                     data.img = [prodImg]
                 }
@@ -144,6 +142,9 @@ class ProductService extends BaseService {
                 data.voucherImage = voucherImage
 
                 data.record = []
+                data.createTime = Date.now()
+                data.createor = this.admin._id
+
                 let prod = new this.Model.Product(data)
                 await prod.save()
             }
