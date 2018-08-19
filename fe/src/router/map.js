@@ -2,7 +2,7 @@ export default {
 
     '/login': {//落地页
         meta: {
-            title: '快来拼手气后台管理系统'
+            title: '招商业绩登记平台'
         },
         component: (resolve) => {
             require(['pages/account/login'], resolve)
@@ -13,7 +13,7 @@ export default {
 
     '/': {
         meta: {
-            title: '主页'
+            title: '招商业绩登记平台-主页'
         },
         component: (resolve) => {
             require(['pages/index'], resolve)

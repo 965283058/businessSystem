@@ -105,6 +105,9 @@ class ProductService extends BaseService {
                 //处理商品图片
                 if (prod.imgType == 0 && info.img != prod.img[0]) {//如果以前是本地图片，且本次上传变化了
                     await delFile(prod.img[0])
+                }
+
+                if(info.imgType == 0){//新上传图片
                     let prodImg = await moveFile(info.img, `product/${dayNum}/${info.img.split('/').pop()}`)
                     data.img = [prodImg]
                 }
