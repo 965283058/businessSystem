@@ -14,7 +14,13 @@
         border-bottom: 1px solid #bbbbbb;
         font-size: 18px;
         line-height: 65px;
-        padding-left: 50px;
+        padding-left: 20px;
+        display: flex;
+        align-items: center;
+    }
+    .top__input{
+        width: 220px;
+        margin-right: 20px;
     }
 
     .text-warn {
@@ -98,7 +104,8 @@
 <template>
     <div class="content-box">
         <div class="top">
-            <el-button type="success" size="small" @click="getList">刷新</el-button>
+            <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId" size="medium"></el-input>
+            <el-button type="success" size="small" @click="getList">查询</el-button>
             <el-button type="primary" size="small" @click="apply" v-if="hasPower('audit_apply')&&vo.showApply">批量结算申请
             </el-button>
             <p class="text-warn">注意：背景色的为黄色置顶的，请尽快申请结算！</p>
@@ -305,6 +312,7 @@
             return {
                 po: {
                     params: {
+                        productId:'',
                         status: null
                     },
                     apply: {

@@ -29,10 +29,7 @@
         font-weight: 700;
         font-size: 48px;
         color: #ffffff;
-    }
-
-    .title--en {
-        font-size: 36px;
+        letter-spacing: 3px;
     }
 
     .login__form {
@@ -40,13 +37,7 @@
     }
 
     .form__input {
-        width: 220px;
-    }
-
-    .warp .title {
-        margin: 0px auto 40px auto;
-        text-align: center;
-        color: #505458;
+        width: 200px;
     }
 
     .errorStyle {
@@ -101,8 +92,7 @@
         <div class="login-box">
             <div class="login-box__content">
                 <div class="title">
-                    <h1>招商业绩登记平台</h1>
-                    <h1 class="title--en">Investment Performance System</h1>
+                    <h1>团队招商业绩登记平台</h1>
                 </div>
                 <br>
                 <el-form class="login__form" :model="po" :rules="vo.rules" label-position="left" ref="userForm" inline>
@@ -126,7 +116,7 @@
     </div>
 </template>
 <script>
-
+    import Vue from 'vue'
     export default {
         data: function () {
             return {
@@ -164,8 +154,14 @@
                 })
             }
         },
-        mounted: function () {
+        mounted() {
+            Vue.Message.closeAll()
             this.$message().close()
+
+            if (process.env.NODE_ENV == "dev") {
+                this.po.userName = "965283058@qq.com"
+                this.po.pwd = '965283058@qq.com'
+            }
         },
         filters: {}
     }

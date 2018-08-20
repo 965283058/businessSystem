@@ -50,9 +50,12 @@ class AuditController extends Controller {
         }
         const {request, service} = this.ctx;
         let params = this.parseParams(request.query)
+        if (params.productId) {
+            params.productId = params.productId.trim()
+        }
         this.ctx.validate(listRule, params)
 
-        if (params.result && params.result.indexOf(",")) {
+        if (params.result && params.result.indexOf(",") > -1) {
             params.result = params.result.split(',')
         }
 

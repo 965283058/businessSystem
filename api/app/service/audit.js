@@ -65,17 +65,26 @@ class AuditService extends BaseService {
             if (Array.isArray(params.result)) {
                 where['result'] = {'$in': params.result}
             } else if (params.result) {
-                where['result'] = params.result
+                where['result'] = Number.parseInt(params.result)
             }
 
-            if (params.id) {
+            if (params.productId) {
+                let products = await this.Model.Product.find({orderLink: new RegExp(params.productId)}, '_id')
+                let productIdList = []
+                products.forEach(item=> {
+                    productIdList.push(item._id)
+                })
+                where['productList'] = {$in: productIdList}
+            }
+
+
+            if (params.id) {//给info调用
                 where['_id'] = params.id
             }
 
             if (this.admin.superAdmin == -1) {//如果是普通用户只能查看自己的
                 where['applyUser'] = this.admin._id
             }
-
 
             let data = await this.getList('AuditRecord', where, params.page, params.rows, {
                 applyTime: 1

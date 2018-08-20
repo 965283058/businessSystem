@@ -163,7 +163,7 @@
 <template>
     <div class="base-warp">
         <div class="jf-header">
-            <span class="jf-header__title">招商业绩登记平台</span>
+            <span class="jf-header__title">团队招商业绩登记平台</span>
             <el-dropdown class="jf-user-menu">
                 <span>{{admin.job}}-{{admin.name}}<i class="el-icon-caret-bottom el-icon--right"></i></span>
                 <el-dropdown-menu slot="dropdown">
@@ -389,6 +389,14 @@
                 }).catch(err => {
                     this.showMessage()
                 })
+            }
+        },
+        beforeRouteEnter(to, form, next){
+            let admin = window.sessionStorage.getItem("admin")
+            if (!admin) {
+                window.location.href = window.location.origin + "/login"
+            } else {
+                next()
             }
         },
         mounted () {

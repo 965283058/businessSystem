@@ -27,6 +27,9 @@ class ProductService extends BaseService {
                     where['status'] = params.status
                 }
             }
+            if (params.productId) {
+                where['orderLink'] = new RegExp(params.productId)
+            }
             if (params.activityEndDate) {
                 where['endDate'] = {'$in': params.activityEndDate}
             }
@@ -233,21 +236,34 @@ class ProductService extends BaseService {
                 "$lte": params.activityBeginTime
             }
         }
+        let userList = null
 
         if (this.admin.superAdmin == -1) {//如果是普通用户只能查看自己的
             where['applyUser'] = this.app.mongoose.Types.ObjectId(this.admin._id)  //聚合查询比较傻逼，不会自己转换ObjectId
+        } else if (params.name) {
+            userList = await this.Model.Admin.find({"name": new RegExp(params.name)}, '_id name')
+            let userIds = []
+            userList.forEach(item=> {
+                userIds.push(item._id)
+            })
+            where['applyUser'] = {
+                '$in': userIds
+            }
         }
 
 
         let data = await this.Model.AuditRecord.aggregate([
             {$match: where},
             {$group: {_id: {applyUser: "$applyUser", month: '$month'}, score: {$sum: "$serviceCharge"}}},
+            {$sort: {score: -1}},
             {$skip: (params.page - 1) * params.rows},
             {$limit: params.rows}
         ])
 
         let ids = data.map(item=>item._id.applyUser)
-        let userList = await this.Model.Admin.find({"_id": {'$in': ids}})
+        if (!userList) {
+            userList = await this.Model.Admin.find({"_id": {'$in': ids}}, '_id name')
+        }
 
         let cloneData = this.clone(data)
         cloneData = cloneData.map(item=> {

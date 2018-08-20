@@ -15,13 +15,25 @@
         font-size: 18px;
         color: #3bc1a6;
         line-height: 65px;
-        padding-left: 50px;
+        padding-left: 10px;
         display: flex;
         justify-content: flex-start;
     }
 
     .search__result {
-        width: 340px;
+        width: 300px;
+    }
+
+    .search__radio {
+        margin: 0;
+        margin-right: 15px;
+    }
+
+    .search__result--input {
+        display: flex;
+        align-items: center;
+        width: 200px;
+        margin-right: 20px;
     }
 
     .form__img-box {
@@ -90,9 +102,13 @@
         <div class="top">
             <label>结束时间：</label>
             <div class="search__result">
-                <el-radio v-model="po.params.day" :label="0">结束当天</el-radio>
-                <el-radio v-model="po.params.day" :label="4">结束5天</el-radio>
-                <el-radio v-model="po.params.day" :label="9">结束10天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" :label="0">结束当天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" :label="4">结束5天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" :label="9">结束10天</el-radio>
+            </div>
+            <div class="search__result--input">
+                <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId"
+                          size="medium"></el-input>
             </div>
             <div>
                 <el-button class="search__button" type="success" size="small" @click="getList">查询</el-button>
@@ -106,7 +122,8 @@
 
             <el-table-column key="createTime" prop="createTime" label="提交时间" width="95" align="center" sortable="true">
                 <template slot-scope="scope">
-                    {{scope.row.createTime|getDateTimeString}}
+                    <div>{{scope.row.createTime|getDateString}}</div>
+                    <div>{{scope.row.createTime|getTimeString}}</div>
                 </template>
             </el-table-column>
             <el-table-column key="img" label="图片" width="140" align="center">
@@ -289,7 +306,11 @@
         },
         filters: {
             getDateString,
-            getDateTimeString
+            getDateTimeString,
+            getTimeString(val){
+                let str = getDateTimeString(val)
+                return str.substring(10)
+            }
         },
         watch: {
             'po.result': function (val) {

@@ -19,8 +19,7 @@ let result = response => {
     if (response.data.status == 0) {
         return Promise.resolve(response.data.data)
     } else if (response.data.status == -1) {
-        window.sessionStorage.removeItem("user")
-        router.replace("/login")
+        window.sessionStorage.removeItem("admin")
         if (response.config.transformLogin === undefined || response.config.transformLogin === true) {
             Vue.nextTick(()=> {
                 Vue.Message.closeAll()
@@ -28,7 +27,11 @@ let result = response => {
                     title: "提示",
                     message: "您的登录已失效，请重新登录！",
                     type: 'warning'
-                });
+                }).then(data=> {
+                    router.replace("/login")
+                }).catch(err=> {
+                    router.replace("/login")
+                })
             })
         }
         return Promise.reject({message: ''})

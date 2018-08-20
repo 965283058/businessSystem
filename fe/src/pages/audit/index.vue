@@ -18,6 +18,7 @@
         padding-left: 50px;
         display: flex;
         justify-content: flex-start;
+        align-items: center;
     }
 
     .search__result {
@@ -50,6 +51,8 @@
         width: 80px;
         flex-shrink: 0;
         font-size: 14px;
+        text-align: right;
+        color: #333333;
     }
 
     .product__button {
@@ -68,21 +71,17 @@
         display: inline-block
     }
 
+    .top__input {
+        width: 220px;
+        margin-right: 20px;
+    }
+
 </style>
 <template>
     <div class="content-box">
         <div class="top">
-            <!-- <label>审核状态：</label>
-             <div class="search__result">
-                 <el-checkbox-group v-model="po.result">
-                     <el-checkbox :label="-1">未审核</el-checkbox>
-                     <el-checkbox :label="0">已驳回</el-checkbox>
-                     <el-checkbox :label="1">审核通过</el-checkbox>
-                 </el-checkbox-group>
-             </div>-->
-            <div>
-                <el-button class="search__button" type="success" size="small" @click="getList">刷新</el-button>
-            </div>
+            <el-input class="top__input"  placeholder="输入商品ID进行搜索"  size="medium" v-model.tirm="po.params.productId"></el-input>
+            <el-button class="search__button" type="success" size="small" @click="getList">查询</el-button>
         </div>
         <DataGrid url="/audit/list" :firstLoad="false" :stripe="true" :params="po.params" ref="dg" size="mini">
             <el-table-column type="expand" label="查看商品" width="80">
@@ -133,13 +132,12 @@
                     </el-table>
                 </template>
             </el-table-column>
-            <el-table-column label="申请时间" align="center" min-width="145">
+            <el-table-column label="申请时间" align="center" width="145">
                 <template slot-scope="scope">
                     {{scope.row.applyTime|getDateTimeString}}
                 </template>
             </el-table-column>
-            <el-table-column prop="serviceCharge" label="服务费" header-align="center"
-                             align="right"></el-table-column>
+            <el-table-column prop="serviceCharge" label="服务费" header-align="center" align="right"></el-table-column>
             <el-table-column prop="productList.length" label="商品数量" align="center"></el-table-column>
             <el-table-column label="状态" align="center">
                 <template slot-scope="scope">
@@ -224,10 +222,10 @@
                         </div>
                         <div class="cell">
                             <label class="cell__caption">审核结果：</label>
-                            <div> {{vo.selectRow.result==-1?'未审核':vo.selectRow.result==1?'审核通过':'已驳回'}}</div>
+                            <div>{{vo.selectRow.result==-1?'未审核':vo.selectRow.result==1?'审核通过':'已驳回'}}</div>
                         </div>
-                        <div class="cell">
-                            <label class="cell__caption">审核信息：</label>
+                        <div class="cell" v-if="vo.selectRow.result!=-1">
+                            <label class="cell__caption">{{vo.selectRow.result==1?'备注：':'驳回理由：'}}</label>
                             <div>{{vo.selectRow.notes}}</div>
                         </div>
                     </template>
@@ -269,6 +267,7 @@
             return {
                 po: {
                     params: {
+                        productId: '',
                         result: null
                     },
                     audit: {

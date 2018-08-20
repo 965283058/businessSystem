@@ -57,7 +57,7 @@
         </div>
         <div class="cell">
             <label class="cell__caption">佣金：</label>
-            <div>{{product.commission}}</div>
+            <div>{{product.commission}}%</div>
         </div>
         <div class="cell">
             <label class="cell__caption">券链接：</label>

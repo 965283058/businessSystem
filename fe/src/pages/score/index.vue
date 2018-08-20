@@ -18,69 +18,32 @@
         padding-left: 50px;
         display: flex;
         justify-content: flex-start;
+        align-items: center;
     }
 
     .search__result {
-        width: 300px;
-    }
-
-    .form__img-box {
+        width: 250px;
         margin-right: 20px;
-        float: left;
-    }
-
-    .form__img-box img {
-        max-width: 120px;
-        max-height: 120px;
-    }
-
-    .form__img-title {
-        font-size: 12px;
-        text-align: center;
-        color: blue;
-    }
-
-    .cell {
         display: flex;
-        justify-content: flex-start;
-        padding-left: 30px;
+        align-items: center;
     }
-
-    .cell__caption {
-        width: 80px;
-        flex-shrink: 0;
-        font-size: 14px;
-    }
-
-    .product__button {
-        width: 80px;
-        text-align: center;
-        line-height: 24px;
-        border: 1px solid #3bc1a6;
-        border-radius: 24px;
-        background: transparent;
-        margin: 5px 0;
-    }
-
-    .time_join {
-        width: 20px;
-        text-align: center;
-        display: inline-block
-    }
-
 </style>
 <template>
     <div class="content-box">
         <div class="top">
             <label>选择月份：</label>
             <div class="search__result">
-                <el-date-picker v-model="po.params.month" value-format="yyyy-M" type="month" placeholder="选择月"></el-date-picker>
+                <el-date-picker size="medium"  v-model="po.params.month" value-format="yyyy-M" type="month" placeholder="选择月" @change="dateChange"></el-date-picker>
+            </div>
+            <div class="search__result">
+                <el-input v-model="po.params.name" size="medium" placeholder="输入姓名"></el-input>
             </div>
             <div>
                 <el-button type="success" size="small" @click="getList">查询</el-button>
             </div>
         </div>
         <DataGrid url="/product/score" :stripe="true" :params="po.params" ref="dg" size="mini">
+            <el-table-column type="index" label="序号" align="center"></el-table-column>
             <el-table-column prop="_id.month" label="月份" align="center"></el-table-column>
             <el-table-column label="用户名" align="center">
                 <template slot-scope="scope">
@@ -100,7 +63,8 @@
             return {
                 po: {
                     params: {
-                        month: null
+                        month: null,
+                        name: ''
                     }
                 },
                 vo: {}
@@ -110,6 +74,9 @@
         methods: {
             getList(){
                 this.$refs.dg.reload()
+            },
+            dateChange(){
+                this.$nextTick(this.getList)
             }
         },
         mounted(){

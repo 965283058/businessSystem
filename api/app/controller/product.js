@@ -65,6 +65,10 @@ class ProductController extends Controller {
             params.status = Number.parseInt(params.status)
         }
 
+        if (params.productId) {
+            params.productId = params.productId.trim()
+        }
+
         this.ctx.validate(listRule, params);
         let reuslt = await service.product.list(params)
 
@@ -182,6 +186,10 @@ class ProductController extends Controller {
             params.beginTime = beginTime
             params.endTime = endTime
             delete params.month
+        }
+
+        if (params.name) {
+            params.name = params.name.trim()
         }
 
         this.ctx.validate(scoreRule, params);

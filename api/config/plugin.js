@@ -3,6 +3,8 @@
 // had enabled by egg
 exports.static = true;
 
+exports.session = true;
+
 
 exports.validate = {
     enable: true,
@@ -20,7 +22,3 @@ exports.redis = {
     package: 'egg-redis',
 };
 
-exports.sessionRedis = {
-    enable: true,
-    package: 'egg-session-redis',
-};
