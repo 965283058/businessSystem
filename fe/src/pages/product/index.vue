@@ -90,6 +90,8 @@
         width: 80px;
         flex-shrink: 0;
         font-size: 14px;
+        text-align: right;
+        color: #333333;
     }
 
 </style>

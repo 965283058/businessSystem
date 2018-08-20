@@ -133,7 +133,7 @@
                     </el-table>
                 </template>
             </el-table-column>
-            <el-table-column label="申请时间" align="center">
+            <el-table-column label="申请时间" align="center" min-width="145">
                 <template slot-scope="scope">
                     {{scope.row.applyTime|getDateTimeString}}
                 </template>
