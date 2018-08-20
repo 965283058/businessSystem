@@ -69,7 +69,6 @@
                 <el-table-column prop="email" label="登录邮箱" width="280" header-align="center"
                                  align="left"></el-table-column>
                 <el-table-column prop="name" label="姓名" width="130" align="center"></el-table-column>
-                <el-table-column prop="job" label="职责" width="180" align="center"></el-table-column>
                 <el-table-column label="账号类型" width="160" align="center">
                     <template slot-scope="scope">
                         <div>{{scope.row.superAdmin==-1?'普通用户':scope.row.superAdmin==0?'管理员':'超级管理员'}}</div>
@@ -126,9 +125,6 @@
                     <el-radio v-model="po.admin.superAdmin" :label="-1">普通用户</el-radio>
                     <el-radio v-model="po.admin.superAdmin" :label="0">管理员</el-radio>
                 </el-form-item>
-                <el-form-item label="职责" prop="job">
-                    <el-input v-model="po.admin.job" auto-complete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="角色" prop="power" header-align="center" align="left">
                     <el-checkbox-group v-model="po.admin.power">
                         <el-checkbox v-for="role in vo.roleList" :label="role._id" :key="role._id">{{role.name}}
@@ -165,7 +161,6 @@
                         email: '',
                         name: '',
                         superAdmin: -1,
-                        job: '',
                         power: [],
                         status: 1,
                     },
@@ -240,7 +235,6 @@
                         email: '',
                         name: '',
                         superAdmin: -1,
-                        job: '',
                         power: [],
                         status: 1
                     }

@@ -141,7 +141,6 @@ class AdminService extends BaseService {
         let data = {
             email: info.email,
             name: info.name,
-            job: info.job,
             power: info.power,
             status: info.status,
             superAdmin: info.superAdmin

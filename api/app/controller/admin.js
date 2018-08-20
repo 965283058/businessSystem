@@ -11,7 +11,6 @@ const adminRule = {
     email: {type: 'email', required: true},
     name: {type: 'string', required: true},
     superAdmin:{type: 'enum', values: [0, -1]},// 0管理员 -1普通用户
-    job: {type: 'string', required: true},
     power: {type: "array", required: true},
     status: {type: "int", required: true},
 }

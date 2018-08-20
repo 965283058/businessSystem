@@ -21,24 +21,6 @@
             height: 25px;
         }
 
-        .tkb-button {
-            display: inline-block;
-            font-size: 14px;
-            line-height: 35px;
-            background: #66D3E2;
-            border-radius: 3px;
-            outline: 0;
-            margin: 0;
-            color: #000;
-            padding: 0 20px;
-            border: 0;
-
-        }
-        .tkb-button:hover{
-            outline: 0;
-            background: #0fD3e2;
-            box-shadow: 0px 0px 0.5px 0.5px #66D3E2;
-        }
 
         .text--bold {
             font-weight: bold;
@@ -144,121 +126,11 @@
             margin-bottom: 50px;
         }
 
-        /*重写PC端样式Toast样式*/
-
-        body .ui-toast {
-            display: table-cell;
-            text-align: center;
-            line-height: 100%;
-            z-index: 10001;
-        }
-
-        body .ui-toast:before {
-            content: '';
-            display: inline-block;
-            vertical-align: middle;
-            height: 100%;
-        }
-
-        body .ui-toast__container {
-            width: auto;
-            min-width: 100px;
-            border-radius: 0;
-            overflow: hidden;
-            padding: 5px;
-            padding-right: 15px;
-            display: inline-block;
-            overflow: hidden;
-            /*vertical-align: middle;*/
-
-        }
-
-        body .ui-toast__icon {
-            width: 30px;
-            height: 30px;
-            margin: 0;
-            display: inline-block;
-            float: left;
-            margin-top: 3px;
-        }
-
-        body .ui-toast__text--tip {
-            max-width: 460px;
-            min-height: 40px;
-            font-size: 14px;
-            line-height: 40px;
-            padding: 0;
-            float: left;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            text-align: left;
-        }
-
-        body .ui-toast__text {
-            font-size: 18px;
-            line-height: 30px;
-        }
-
         .nc_iconfont {
             height: 100% !important;
         }
-        body .el-table th{
-            background: #e9f0f9;
-            border-color: #dddddd;
-        }
     </style>
-    <script>
-        !function (a, b) {
-            function c() {
-                var b = f.getBoundingClientRect().width;
-                b / i > 540 && (b = 540 * i);
-                var c = b / 10;
-                f.style.fontSize = c + "px", k.rem = a.rem = c
-            }
-
-            var d, e = a.document, f = e.documentElement, g = e.querySelector('meta[name="viewport"]'), h = e.querySelector('meta[name="flexible"]'), i = 0, j = 0, k = b.flexible || (b.flexible = {});
-            if (g) {
-                console.warn("将根据已有的meta标签来设置缩放比例");
-                var l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/);
-                l && (j = parseFloat(l[1]), i = parseInt(1 / j))
-            } else if (h) {
-                var m = h.getAttribute("content");
-                if (m) {
-                    var n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/);
-                    n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2)))
-                }
-            }
-            if (!i && !j) {
-                var p = a.navigator.userAgent, q = (!!p.match(/android/gi), !!p.match(/iphone/gi)), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio;
-                i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i
-            }
-            if (f.setAttribute("data-dpr", i), !g)if (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild)f.firstElementChild.appendChild(g); else {
-                var t = e.createElement("div");
-                t.appendChild(g), e.write(t.innerHTML)
-            }
-            a.addEventListener("resize", function () {
-                clearTimeout(d), d = setTimeout(c, 300)
-            }, !1), a.addEventListener("pageshow", function (a) {
-                a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
-            }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
-                e.body.style.fontSize = 12 * i + "px"
-            }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
-                var b = parseFloat(a) * this.rem;
-                return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
-            }, k.px2rem = function (a) {
-                var b = parseFloat(a) / this.rem;
-                return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
-            }
-        }(window, window.lib || (window.lib = {}));
-    </script>
     <script src="https://cdn.staticfile.org/es6-promise/4.0.5/es6-promise.auto.min.js" async></script>
-<!--
-    <script src="/static/kingEditor/kindeditor-all.js"></script>
-    <link rel="stylesheet" href="/static/kingEditor/themes/default/default.css">
--->
-
     <script>
         /* window.onerror=function (message,file,line,col) {
          alert("msg:"+message+ "      file:"+file+"  line:"+line)
