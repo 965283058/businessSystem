@@ -169,6 +169,7 @@
                     this.vo.loading = false
                     this.vo.data = data.rows
                     this.vo.total = data.total
+                    this.$emit("data",data)
                 }).catch(err => {
                     this.vo.loading = false
                     this.$alert({

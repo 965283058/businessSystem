@@ -19,6 +19,7 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        position: relative;
     }
 
     .search__result {
@@ -27,13 +28,20 @@
         display: flex;
         align-items: center;
     }
+    .top__count{
+        position: absolute;
+        right: 20px;
+        top: 0px;
+        display: inline-block;
+    }
 </style>
 <template>
     <div class="content-box">
         <div class="top">
             <label>选择月份：</label>
             <div class="search__result">
-                <el-date-picker size="medium"  v-model="po.params.month" value-format="yyyy-M" type="month" placeholder="选择月" @change="dateChange"></el-date-picker>
+                <el-date-picker size="medium" v-model="po.params.month" value-format="yyyy-M" type="month"
+                                placeholder="选择月" @change="dateChange"></el-date-picker>
             </div>
             <div class="search__result">
                 <el-input v-model="po.params.name" size="medium" placeholder="输入姓名"></el-input>
@@ -41,8 +49,9 @@
             <div>
                 <el-button type="success" size="small" @click="getList">查询</el-button>
             </div>
+            <span class="top__count">总金额：{{vo.count}}</span>
         </div>
-        <DataGrid url="/product/score" :stripe="true" :params="po.params" ref="dg" size="mini">
+        <DataGrid url="/product/score" :stripe="true" :params="po.params" ref="dg" size="mini" @data="dataChange">
             <el-table-column type="index" label="序号" align="center"></el-table-column>
             <el-table-column prop="_id.month" label="月份" align="center"></el-table-column>
             <el-table-column label="用户名" align="center">
@@ -67,7 +76,9 @@
                         name: ''
                     }
                 },
-                vo: {}
+                vo: {
+                    count: 0
+                }
             }
         },
         computed: {},
@@ -77,6 +88,10 @@
             },
             dateChange(){
                 this.$nextTick(this.getList)
+            },
+            dataChange(data){
+                console.info(data)
+                this.vo.count = data.count || 0
             }
         },
         mounted(){

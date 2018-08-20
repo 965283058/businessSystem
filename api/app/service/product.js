@@ -251,6 +251,18 @@ class ProductService extends BaseService {
             }
         }
 
+        let countData = await this.Model.AuditRecord.aggregate([
+            {$match: where},
+            {$group: {_id: 1, score: {$sum: "$serviceCharge"}}}
+        ])
+
+        let count = 0
+        if (countData && countData.length) {
+            count = countData[0].score
+        } else {
+            return {page: params.page, rows: [], count: count}
+        }
+
 
         let data = await this.Model.AuditRecord.aggregate([
             {$match: where},
@@ -271,7 +283,7 @@ class ProductService extends BaseService {
             item.name = user.name
             return item
         })
-        return {page: params.page, rows: cloneData}
+        return {page: params.page, rows: cloneData, count: count || 0}
     }
 }
 
