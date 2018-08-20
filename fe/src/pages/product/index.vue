@@ -121,34 +121,34 @@
                 </template>
             </el-table-column>
             <el-table-column key="name" prop="name" label="名称" width="240" header-align="center"></el-table-column>
-            <el-table-column key="active" label="活动时间" width="200" align="center">
+            <el-table-column key="active" label="活动时间" width="150" align="center">
                 <template slot-scope="scope">
                     <div>{{scope.row.beginTime|getDateTimeString}}</div>
                     <span class="time_join">至</span>
                     <div>{{scope.row.endTime|getDateTimeString}}</div>
                 </template>
             </el-table-column>
-            <el-table-column key="price" prop="price" label="券后价" width="100" align="center"></el-table-column>
-            <el-table-column key="commission" label="佣金" width="100" align="center">
+            <el-table-column key="price" prop="price" label="券后价" width="80" align="center"></el-table-column>
+            <el-table-column key="commission" label="佣金" width="80" align="center">
                 <template slot-scope="scope">
                     <div>{{scope.row.commission+'%'}}</div>
                 </template>
             </el-table-column>
             <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                              align="center"></el-table-column>
-            <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
+            <el-table-column key="desc" prop="desc" label="商品文案" min-width="200"
                              header-align="center"></el-table-column>
-            <el-table-column key="remark" prop="remark" label="备注" min-width="280"
+            <el-table-column key="remark" prop="remark" label="备注" min-width="200"
                              header-align="center"></el-table-column>
 
-            <el-table-column key="cancelReason" label="取消理由" min-width="280" header-align="center"
+            <el-table-column key="cancelReason" label="取消理由" min-width="200" header-align="center"
                              v-if="status=='cancel'">
                 <template slot-scope="scope">
                     <div>{{getCancelReason(scope.row)}}</div>
                 </template>
             </el-table-column>
             <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center" v-if="vo.superAdmin!=-1"></el-table-column>
-            <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
+            <el-table-column label="操作" width="130" align="center" fixed="right" key="setting">
                 <template slot-scope="scope">
                     <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
                     <p class="dg__button dg__button--red" @click="toEdit(scope.row)"
