@@ -6,7 +6,7 @@ module.exports = app => {
 
             if (Date.now() - res.__time > 300000) {
                 this.set(key, res)
-            } 
+            }
             return JSON.parse(res);
         },
         async set(key, value, maxAge) {

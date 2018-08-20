@@ -50,7 +50,7 @@
                     {{scope.row.name}}
                 </template>
             </el-table-column>
-            <el-table-column prop="score" label="服务费合计" header-align="center" align="right"></el-table-column>
+            <el-table-column prop="score" label="服务费合计" align="center"></el-table-column>
         </DataGrid>
     </div>
 </template>

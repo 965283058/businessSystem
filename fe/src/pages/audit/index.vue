@@ -137,7 +137,7 @@
                     {{scope.row.applyTime|getDateTimeString}}
                 </template>
             </el-table-column>
-            <el-table-column prop="serviceCharge" label="服务费" header-align="center" align="right"></el-table-column>
+            <el-table-column prop="serviceCharge" label="服务费" align="center"></el-table-column>
             <el-table-column prop="productList.length" label="商品数量" align="center"></el-table-column>
             <el-table-column label="状态" align="center">
                 <template slot-scope="scope">
