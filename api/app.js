@@ -6,14 +6,18 @@ module.exports = app => {
                 let data = await app.redis.get(key);
                 if (!data) return null;
                 data = JSON.parse(data)
-                let diff = Date.now() - data.__time
+                let now = Date.now()
+                let diff = now - data.__time
                 if (diff > timeout) {
+                    console.info("timeout", timeout)
                     this.destroy(key)
                     return null
                 }
                 if (diff > 300000) {
+                    console.info("diff>300000", diff)
                     this.set(key, data)
                 }
+                console.info("ttfb", Date.now() - now)
                 return data
             } catch (e) {
                 return null
