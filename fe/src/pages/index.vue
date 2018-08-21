@@ -79,6 +79,7 @@
         height: 100%;
         background: #46425a;
         overflow-x: hidden;
+        padding-top: 20px;
     }
     .left-menu::-webkit-scrollbar{
         width: 2px;
@@ -93,7 +94,7 @@
     body .left-menu__item {
         color: #cccccc;
         font-weight: bold;
-        font-size: 22px;
+        font-size: 18px;
     }
 
     body .left-menu__item--active {
@@ -135,6 +136,10 @@
         background: url("./assets/images/menu_power.png") no-repeat;
     }
 
+    .menu--child {
+        padding-left: 15px;
+        font-size: 16px;
+    }
 
 </style>
 
@@ -152,7 +157,7 @@
     body .left-menu__item .el-submenu__title {
         color: #cccccc;
         font-weight: bold;
-        font-size: 22px;
+        font-size: 18px;
     }
 
     body .left-menu__item .el-submenu__title:hover {
@@ -160,9 +165,6 @@
         color: #ffffff;
     }
 
-    body .menu--child {
-        padding-left: 15px;
-    }
 
 
 </style>
