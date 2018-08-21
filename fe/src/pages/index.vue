@@ -354,7 +354,7 @@
                     this.msgDialog.text = this.messageList[0].content
                     this.msgDialog.btnText = '30秒后可以关闭'
                     this.msgDialog.show = true
-                    let time = 30
+                    let time = 10
                     this.msgDialog.timer = setInterval(()=> {
                         time -= 1
                         this.msgDialog.btnText = `${time}秒后可以关闭`
@@ -415,6 +415,7 @@
         },
         beforeDestroy(){
             clearInterval(this.messageTimer)
+            clearInterval(this.msgDialog.timer)
         },
         filters: {}
     }

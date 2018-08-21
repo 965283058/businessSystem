@@ -20,7 +20,7 @@
     }
 
     .login-box__content {
-        width: 550px;
+        width: 570px;
         margin: 0 auto;
     }
 
@@ -29,7 +29,6 @@
         font-weight: 700;
         font-size: 48px;
         color: #ffffff;
-        letter-spacing: 3px;
     }
 
     .login__form {
@@ -37,7 +36,7 @@
     }
 
     .form__input {
-        width: 200px;
+        width: 230px;
     }
 
     .errorStyle {
@@ -91,10 +90,7 @@
     <div class="login-warp">
         <div class="login-box">
             <div class="login-box__content">
-                <div class="title">
-                    <h1>团队招商业绩登记平台</h1>
-                </div>
-                <br>
+                <h1 class="title">团队招商业绩登记平台</h1>
                 <el-form class="login__form" :model="po" :rules="vo.rules" label-position="left" ref="userForm" inline>
                     <el-form-item prop="userName">
                         <el-input class="form__input" type="text" v-model="po.userName" placeholder="账号" wdith="220px"

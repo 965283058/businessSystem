@@ -45,6 +45,7 @@
         display: flex;
         justify-content: flex-start;
         padding-left: 30px;
+        margin-bottom: 10px;
     }
 
     .cell__caption {
@@ -144,8 +145,7 @@
                     {{scope.row.result==-1?'未审核':scope.row.result==1?'审核通过':'已驳回'}}
                 </template>
             </el-table-column>
-            <el-table-column key="notes" prop="notes" label="驳回原因" min-width="200" header-align="center"
-                             v-if="status=='fail'"></el-table-column>
+            <el-table-column key="notes" prop="notes" label="驳回理由" min-width="200" align="center" v-if="status=='fail'"></el-table-column>
             <el-table-column label="申请人" align="center">
                 <template slot-scope="scope">
                     {{scope.row.applyUser.name}}
@@ -207,7 +207,7 @@
                             <el-radio v-model="po.audit.result" :label="0">驳回</el-radio>
                         </el-form-item>
                         <el-form-item :label="po.audit.result==1?'备注':'驳回理由'" prop="notes">
-                            <el-input type="textarea" v-model="po.audit.notes" rows="4"></el-input>
+                            <el-input type="textarea" v-model="po.audit.notes" :placeholder="po.audit.result==1?'请输入审核备注(选填)':'请输入驳回理由(必填)'"   rows="4"></el-input>
                         </el-form-item>
                     </el-form>
 
@@ -380,9 +380,6 @@
             getDateTimeString
         },
         watch: {
-            /* 'po.result': function (val) {
-             this.po.params.result = val.join(',')
-             }*/
         }
     }
 </script>

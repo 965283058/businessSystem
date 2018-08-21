@@ -89,8 +89,6 @@ class AdminController extends Controller {
         this.output(reuslt)
     }
 
-
-
     async changeStatus() {
         if (!this.checkPower("admin_changeStatus")) {
             return
@@ -100,7 +98,6 @@ class AdminController extends Controller {
         let reuslt = await service.admin.changeStatus(request.body.id)
         this.output(reuslt)
     }
-
 
     async list() {
         if (!this.checkPower("admin_list")) {

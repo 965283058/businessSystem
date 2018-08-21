@@ -73,11 +73,12 @@ class AuditController extends Controller {
         let part;
         let params = {}
         try {
+            let now = Date.now()
             while ((part = await parts()) != null) {
                 if (part.length) {
                     params[part[0]] = part[1]
                 } else { //保存图片文件
-                    let pullPath = await saveFile(`temp/${part.filename}`, part)
+                    let pullPath = await saveFile(`temp/${part.fieldname}_${now}`, part)
                     params[part.fieldname] = pullPath
                 }
             }

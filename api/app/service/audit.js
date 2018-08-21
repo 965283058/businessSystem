@@ -17,9 +17,9 @@ class AuditService extends BaseService {
 
             let dateNum = this.getDateNum()
 
-            let chatImg = await moveFile(info.chatImg, `apply/${dateNum}/chat_${info.chatImg.split('/').pop()}`)
-            let voucherImg = await moveFile(info.voucherImg, `apply/${dateNum}/voucher_${info.voucherImg.split('/').pop()}`)
-            let accountImg = await moveFile(info.accountImg, `apply/${dateNum}/account_${info.accountImg.split('/').pop()}`)
+            let chatImg = await moveFile(info.chatImg, `apply/${dateNum}/${info.chatImg.split('/').pop()}`)
+            let voucherImg = await moveFile(info.voucherImg, `apply/${dateNum}/${info.voucherImg.split('/').pop()}`)
+            let accountImg = await moveFile(info.accountImg, `apply/${dateNum}/${info.accountImg.split('/').pop()}`)
             let data = {
                 productList: info.productList,
                 chatImg,
