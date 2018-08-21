@@ -37,8 +37,8 @@
 
     .dg__button {
         text-align: center;
-        font-size: 16px;
-        line-height: 26px;
+        font-size: 14px;
+        line-height: 24px;
         color: #0028ff;
         cursor: pointer;
     }
