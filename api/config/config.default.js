@@ -42,7 +42,7 @@ module.exports = appInfo => {
     config.defaultLocale = 'zh-CN'
 
     exports.mongoose = {
-        url: 'mongodb://localhost/businessSystem',
+        url: 'mongodb://127.0.0.1/businessSystem',
         options: {
             auto_reconnect: true,
             poolSize: 5
