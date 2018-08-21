@@ -14,6 +14,9 @@ export const get = function (url, params, opts = {}) {
     return Vue.http.get(url, Object.assign({}, {params: params}, opts)).then(result, err)
 }
 
+const toLogin = function () {
+    window.location.href = `${window.location.origin}/login`
+}
 
 let result = response => {
     if (response.data.status == 0) {
@@ -28,9 +31,9 @@ let result = response => {
                     message: "您的登录已失效，请重新登录！",
                     type: 'warning'
                 }).then(data=> {
-                    router.replace("/login")
+                    toLogin()
                 }).catch(err=> {
-                    router.replace("/login")
+                    toLogin()
                 })
             })
         }
