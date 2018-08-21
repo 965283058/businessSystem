@@ -1,4 +1,4 @@
-const timeout = 35 * 60 * 60 * 1000//session超时时间
+const timeout = 35 * 60 * 1000//session超时时间 30分钟
 module.exports = app => {
     app.sessionStore = {
         async get(key) {
@@ -9,7 +9,7 @@ module.exports = app => {
                 this.destroy(key)
                 return null
             }
-            if (timeout > 300000) {
+            if (diff > 300000) {
                 this.set(key, res)
             }
             return JSON.parse(res);
@@ -28,11 +28,8 @@ module.exports = app => {
     };
 
     app.beforeStart(async() => {
-
         app.domian = app.config.env == "prod" ? "http://47.94.83.98/" : 'http://localhost:7001/'
         const ctx = app.createAnonymousContext();
-
-
         await ctx.service.admin.addDeafultSuperAdmin({
             email: "965283058@qq.com",
             name: '姜鹏',
