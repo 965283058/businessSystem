@@ -34,6 +34,11 @@ class ProductService extends BaseService {
                 where['endDate'] = {'$in': params.activityEndDate}
             }
 
+            if (params.userId) {
+                where['createor'] = params.userId
+            }
+
+
             let refs = null
             if (this.admin.superAdmin != -1) {
                 refs = [{key: 'createor', field: 'name'}]
@@ -284,6 +289,15 @@ class ProductService extends BaseService {
             return item
         })
         return {page: params.page, rows: cloneData, count: count || 0}
+    }
+
+    async userList() {
+        try {
+            let data = await this.Model.Admin.find({"superAdmin": -1}, '_id name')
+            return data
+        } catch (e) {
+            return e
+        }
     }
 }
 

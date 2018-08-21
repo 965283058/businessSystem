@@ -8,7 +8,7 @@
     }
 
     .top {
-        height: 65px;
+        min-height: 65px;
         background: #eaedf1;
         border-top: 1px solid #bbbbbb;
         border-bottom: 1px solid #bbbbbb;
@@ -16,17 +16,23 @@
         color: #3bc1a6;
         line-height: 65px;
         padding-left: 50px;
+        padding-right: 100px;
         display: flex;
+        flex-wrap: wrap;
         justify-content: flex-start;
         align-items: center;
         position: relative;
     }
 
     .search__result {
-        width: 250px;
+        width: 220px;
         margin-right: 20px;
         display: flex;
         align-items: center;
+        flex-shrink: 0;
+    }
+    .search__result--hasTitle{
+        width: 280px;
     }
     .top__count{
         position: absolute;
@@ -38,13 +44,13 @@
 <template>
     <div class="content-box">
         <div class="top">
-            <label>选择月份：</label>
-            <div class="search__result">
+            <div class="search__result search__result--hasTitle">
+                <label>月份：</label>
                 <el-date-picker size="medium" v-model="po.params.month" value-format="yyyy-M" type="month"
-                                placeholder="选择月" @change="dateChange"></el-date-picker>
+                                placeholder="选择月份" @change="dateChange"></el-date-picker>
             </div>
             <div class="search__result">
-                <el-input v-model="po.params.name" size="medium" placeholder="输入姓名"></el-input>
+                <el-input class="search__result-input" v-model="po.params.name" size="medium" placeholder="输入姓名"></el-input>
             </div>
             <div>
                 <el-button type="success" size="small" @click="getList">查询</el-button>

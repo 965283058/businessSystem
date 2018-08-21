@@ -54,6 +54,44 @@ const getDateString = function (time) {
     return `${date.getFullYear()}-${String((date.getMonth() + 1)).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
+const getBetweenDate = function (dateString) {
+    let year = dateString.split('-')[0]
+    let month = Number.parseInt(dateString.split('-')[1])
+
+    let date = new Date()
+    date.setFullYear(year)
+    date.setMonth(month - 1)
+    date.setDate(1)
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setMilliseconds(0)
+    let beginTime = date.getTime()
+
+    let day = 31//
+    if ([0, 2, 4, 6, 7, 9, 11].indexOf(month) == -1) {
+        if (month == 1) {
+            day = 28
+            if (year % 100 === 0 % year % 400 === 0) {
+                day = 29
+            } else if (year % 100 != 0 && year % 4 === 0) {
+                day = 29
+            }
+        } else {
+            day = 30
+        }
+    }
+
+    date.setDate(day)
+    date.setHours(23)
+    date.setMinutes(59)
+    date.setSeconds(59)
+    date.setMilliseconds(999)
+
+    let endTime = date.getTime()
+    return {beginTime, endTime}
+}
+
 class ProductController extends Controller {
     async list() {
         if (!this.checkPower("product_list")) {
@@ -182,7 +220,7 @@ class ProductController extends Controller {
         let params = this.parseParams(request.query)
 
         if (params.month) {
-            let {beginTime, endTime}=this.getBetweenDate(params.month)
+            let {beginTime, endTime}=getBetweenDate(params.month)
             params.beginTime = beginTime
             params.endTime = endTime
             delete params.month
@@ -196,46 +234,6 @@ class ProductController extends Controller {
         let reuslt = await service.product.score(params)
         this.output(reuslt)
     }
-
-
-    getBetweenDate(dateString) {
-        let year = dateString.split('-')[0]
-        let month = Number.parseInt(dateString.split('-')[1])
-
-        let date = new Date()
-        date.setFullYear(year)
-        date.setMonth(month - 1)
-        date.setDate(1)
-        date.setHours(0)
-        date.setMinutes(0)
-        date.setSeconds(0)
-        date.setMilliseconds(0)
-        let beginTime = date.getTime()
-
-        let day = 31//
-        if ([0, 2, 4, 6, 7, 9, 11].indexOf(month) == -1) {
-            if (month == 1) {
-                day = 28
-                if (year % 100 === 0 % year % 400 === 0) {
-                    day = 29
-                } else if (year % 100 != 0 && year % 4 === 0) {
-                    day = 29
-                }
-            } else {
-                day = 30
-            }
-        }
-
-        date.setDate(day)
-        date.setHours(23)
-        date.setMinutes(59)
-        date.setSeconds(59)
-        date.setMilliseconds(999)
-
-        let endTime = date.getTime()
-        return {beginTime, endTime}
-    }
-
 
     async urgeProductList() {
         if (!this.checkPower("urge_product_list")) {
@@ -251,6 +249,14 @@ class ProductController extends Controller {
         }
         params.status = 0
         let reuslt = await service.product.list(params)
+        this.output(reuslt)
+    }
+
+    async userList() {
+        if (!this.checkPower("product_userList")) {
+            return
+        }
+        let reuslt = await this.ctx.service.product.userList()
         this.output(reuslt)
     }
 }

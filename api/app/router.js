@@ -31,6 +31,7 @@ module.exports = app => {
 
     //商品
     router.get('/api/product/list', controller.product.list);
+    router.get('/api/product/userList', controller.product.userList);
     router.post('/api/product/edit', controller.product.edit);
     router.post('/api/product/cancel', controller.product.cancel);
     router.get('/api/product/auditInfo', controller.product.auditInfo);

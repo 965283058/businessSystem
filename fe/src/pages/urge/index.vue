@@ -8,20 +8,24 @@
     }
 
     .top {
-        height: 65px;
+        height: auto;
+        min-height: 65px;
         background: #eaedf1;
         border-top: 1px solid #bbbbbb;
         border-bottom: 1px solid #bbbbbb;
         font-size: 18px;
         color: #3bc1a6;
-        line-height: 65px;
-        padding-left: 10px;
+        line-height: 50px;
+        padding: 7.5px 10px;
         display: flex;
         justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .search__result {
         width: 300px;
+        height: 50px;
+        flex-shrink: 0;
     }
 
     .search__radio {
@@ -30,9 +34,9 @@
     }
 
     .search__result--input {
+        width: 200px;
         display: flex;
         align-items: center;
-        width: 200px;
         margin-right: 20px;
     }
 
@@ -46,33 +50,7 @@
         max-height: 120px;
     }
 
-    .form__img-title {
-        font-size: 12px;
-        text-align: center;
-        color: blue;
-    }
 
-    .cell {
-        display: flex;
-        justify-content: flex-start;
-        padding-left: 30px;
-    }
-
-    .cell__caption {
-        width: 80px;
-        flex-shrink: 0;
-        font-size: 14px;
-    }
-
-    .product__button {
-        width: 80px;
-        text-align: center;
-        line-height: 24px;
-        border: 1px solid #3bc1a6;
-        border-radius: 24px;
-        background: transparent;
-        margin: 5px 0;
-    }
 
     .time_join {
         width: 20px;
@@ -106,9 +84,18 @@
                 <el-radio class="search__radio" v-model="po.params.day" :label="4">结束5天</el-radio>
                 <el-radio class="search__radio" v-model="po.params.day" :label="9">结束10天</el-radio>
             </div>
-            <div class="search__result--input">
+            <div class="search__result search__result--input">
                 <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId"
                           size="medium"></el-input>
+            </div>
+            <div class="search__result search__result--input">
+                <el-select class="top__input" clearable v-model="po.params.userId" placeholder="请选择招商员" size="medium">
+                    <el-option v-for="item in vo.userList"
+                               :key="item._id"
+                               :label="item.name"
+                               :value="item._id">
+                    </el-option>
+                </el-select>
             </div>
             <div>
                 <el-button class="search__button" type="success" size="small" @click="getList">查询</el-button>
@@ -206,7 +193,9 @@
             return {
                 po: {
                     params: {
-                        day: 0
+                        day: 0,
+                        userId:'',
+                        productId:''
                     },
                     notice: {
                         type: 0,
@@ -214,6 +203,7 @@
                     }
                 },
                 vo: {
+                    userList:[],
                     product: null,
                     showInfoDialog: false,
                     selectRow: null,
@@ -295,10 +285,18 @@
                         })
                     }
                 })
+            },
+            getUserList(){
+                this.$get("/product/userList").then(data=> {
+                    this.vo.userList = data
+                }).catch(err=> {
+                    this.$alert(err.message, {type: 'error'})
+                })
             }
         },
         mounted(){
             this.vo.now = Date.now()
+            this.getUserList()
         },
         components: {
             perview,

@@ -18,7 +18,8 @@
         display: flex;
         align-items: center;
     }
-    .top__input{
+
+    .top__input {
         width: 220px;
         margin-right: 20px;
     }
@@ -104,7 +105,20 @@
 <template>
     <div class="content-box">
         <div class="top">
-            <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId" size="medium"></el-input>
+            <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId"
+                      size="medium"></el-input>
+
+
+            <el-select class="top__input" clearable  v-if='hasPower("product_userList")' v-model="po.params.userId" placeholder="请选择招商员"  size="medium">
+                <el-option v-for="item in vo.userList"
+                        :key="item._id"
+                        :label="item.name"
+                        :value="item._id">
+                </el-option>
+            </el-select>
+
+
+
             <el-button type="success" size="small" @click="getList">查询</el-button>
             <el-button type="primary" size="small" @click="apply" v-if="hasPower('audit_apply')&&vo.showApply">批量结算申请
             </el-button>
@@ -156,7 +170,8 @@
                     <div>{{getCancelReason(scope.row)}}</div>
                 </template>
             </el-table-column>
-            <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center" v-if="vo.superAdmin!=-1"></el-table-column>
+            <el-table-column key="createor" prop="createor.name" label="招商员" width="100" align="center"
+                             v-if="vo.superAdmin!=-1"></el-table-column>
             <el-table-column label="操作" width="130" align="center" fixed="right" key="setting">
                 <template slot-scope="scope">
                     <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
@@ -188,7 +203,8 @@
             </el-table-column>
         </DataGrid>
 
-        <el-dialog width="780px" title="申请结算" :close-on-click-modal="false" :visible.sync="vo.showApplyDialog" v-if="vo.showApply&&vo.showApplyDialog">
+        <el-dialog width="780px" title="申请结算" :close-on-click-modal="false" :visible.sync="vo.showApplyDialog"
+                   v-if="vo.showApply&&vo.showApplyDialog">
             <el-form ref="form" :model="po.apply" :rules="rules" label-width="80px" class="form">
                 <el-form-item label="上传图片">
                     <div class="form__img-box">
@@ -312,8 +328,9 @@
             return {
                 po: {
                     params: {
-                        productId:'',
-                        status: null
+                        productId: '',
+                        userId:'',
+                        status: null,
                     },
                     apply: {
                         productIds: '',
@@ -336,7 +353,8 @@
                     showAuditDialog: false,
                     auditInfo: null,
                     superAdmin: -1,
-                    admin: null
+                    admin: null,
+                    userList: []
                 },
                 rules: {
                     serviceCharge: [
@@ -516,8 +534,14 @@
                 }).catch(err=> {
                     this.$alert(err.message, {type: 'error'})
                 })
+            },
+            getUserList(){
+                this.$get("/product/userList").then(data=> {
+                    this.vo.userList = data
+                }).catch(err=> {
+                    this.$alert(err.message, {type: 'error'})
+                })
             }
-
         },
         beforeRouteUpdate (to, from, next) {// 在当前路由改变，但是该组件被复用时调用
             this.$nextTick(this.init)
@@ -529,6 +553,9 @@
                 this.vo.admin = admin
                 this.vo.superAdmin = admin.superAdmin
             } catch (e) {
+            }
+            if (this.hasPower("product_userList")) {
+                this.getUserList()
             }
         },
         mounted(){

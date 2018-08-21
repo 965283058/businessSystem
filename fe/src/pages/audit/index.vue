@@ -81,7 +81,15 @@
 <template>
     <div class="content-box">
         <div class="top">
-            <el-input class="top__input"  placeholder="输入商品ID进行搜索"  size="medium" v-model.tirm="po.params.productId"></el-input>
+            <el-input class="top__input" placeholder="输入商品ID进行搜索" size="medium"
+                      v-model.tirm="po.params.productId"></el-input>
+            <el-select class="top__input" clearable v-model="po.params.userId" placeholder="请选择招商员" size="medium">
+                <el-option v-for="item in vo.userList"
+                           :key="item._id"
+                           :label="item.name"
+                           :value="item._id">
+                </el-option>
+            </el-select>
             <el-button class="search__button" type="success" size="small" @click="getList">查询</el-button>
         </div>
         <DataGrid url="/audit/list" :firstLoad="false" :stripe="true" :params="po.params" ref="dg" size="mini">
@@ -145,7 +153,8 @@
                     {{scope.row.result==-1?'未审核':scope.row.result==1?'审核通过':'已驳回'}}
                 </template>
             </el-table-column>
-            <el-table-column key="notes" prop="notes" label="驳回理由" min-width="200" align="center" v-if="status=='fail'"></el-table-column>
+            <el-table-column key="notes" prop="notes" label="驳回理由" min-width="200" align="center"
+                             v-if="status=='fail'"></el-table-column>
             <el-table-column label="申请人" align="center">
                 <template slot-scope="scope">
                     {{scope.row.applyUser.name}}
@@ -207,7 +216,8 @@
                             <el-radio v-model="po.audit.result" :label="0">驳回</el-radio>
                         </el-form-item>
                         <el-form-item :label="po.audit.result==1?'备注':'驳回理由'" prop="notes">
-                            <el-input type="textarea" v-model="po.audit.notes" :placeholder="po.audit.result==1?'请输入审核备注(选填)':'请输入驳回理由(必填)'"   rows="4"></el-input>
+                            <el-input type="textarea" v-model="po.audit.notes"
+                                      :placeholder="po.audit.result==1?'请输入审核备注(选填)':'请输入驳回理由(必填)'" rows="4"></el-input>
                         </el-form-item>
                     </el-form>
 
@@ -268,6 +278,7 @@
                 po: {
                     params: {
                         productId: '',
+                        userId: '',
                         result: null
                     },
                     audit: {
@@ -277,6 +288,7 @@
                     }
                 },
                 vo: {
+                    userList: [],
                     selectRow: null,
                     showAuditDialog: false,
                     auditDialogTitle: '',
@@ -363,6 +375,13 @@
                 this.vo.product = prod
                 this.vo.showInfoDialog = true
             },
+            getUserList(){
+                this.$get("/product/userList").then(data=> {
+                    this.vo.userList = data
+                }).catch(err=> {
+                    this.$alert(err.message, {type: 'error'})
+                })
+            }
         },
         beforeRouteUpdate (to, from, next) {// 在当前路由改变，但是该组件被复用时调用
             this.$nextTick(this.init)
@@ -370,6 +389,7 @@
         },
         mounted(){
             this.init()
+            this.getUserList()
         },
         components: {
             perview,
@@ -379,7 +399,6 @@
             getDateString,
             getDateTimeString
         },
-        watch: {
-        }
+        watch: {}
     }
 </script>

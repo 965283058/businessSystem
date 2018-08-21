@@ -84,7 +84,10 @@ class AuditService extends BaseService {
 
             if (this.admin.superAdmin == -1) {//如果是普通用户只能查看自己的
                 where['applyUser'] = this.admin._id
+            } else if (params.userId) {
+                where['applyUser'] = params.userId
             }
+
 
             let data = await this.getList('AuditRecord', where, params.page, params.rows, {
                 applyTime: 1
