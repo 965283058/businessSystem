@@ -80,6 +80,9 @@
         background: #46425a;
         overflow-x: hidden;
     }
+    .left-menu::-webkit-scrollbar{
+        width: 2px;
+    }
 
     .jf-view-content {
         flex: 1;
@@ -157,6 +160,10 @@
         color: #ffffff;
     }
 
+    body .menu--child {
+        padding-left: 15px;
+    }
+
 
 </style>
 
@@ -174,14 +181,14 @@
         </div>
         <el-row class="jf-content">
             <div class="jf-menus">
-                <el-menu default-active="2" class="el-menu-vertical-demo left-menu">
+                <el-menu default-active="2" class="left-menu">
                     <template v-for="(menu,index) in menus">
                         <el-submenu :index="index+''" v-if="menu.children&&menu.children.length"
                                     class="left-menu__item">
                             <div slot="title"><i :class="menu.icon"></i>{{menu.text}}</div>
                             <el-menu-item v-if="menu.children" v-for="(child,inx) in menu.children"
                                           :index="index+''+inx" :key="child.id">
-                                <div @click="to(child)">{{child.text}}</div>
+                                <div class="menu--child" @click="to(child)">{{child.text}}</div>
                             </el-menu-item>
                         </el-submenu>
 

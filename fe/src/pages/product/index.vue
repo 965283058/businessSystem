@@ -119,7 +119,7 @@
                     {{scope.row.createTime|getDateTimeString}}
                 </template>
             </el-table-column>
-            <el-table-column key="img" label="图片" width="140" align="center">
+            <el-table-column key="img" label="主图" width="140" align="center">
                 <template slot-scope="scope">
                     <perview class="form__img-box">
                         <a :href="scope.row.orderLink" target="_blank" @click.stop>
@@ -129,7 +129,7 @@
                     </perview>
                 </template>
             </el-table-column>
-            <el-table-column key="name" prop="name" label="名称" width="240" header-align="center"></el-table-column>
+            <el-table-column key="name" prop="name" label="短标题" width="240" header-align="center"></el-table-column>
             <el-table-column key="active" label="活动时间" width="150" align="center">
                 <template slot-scope="scope">
                     <div>{{scope.row.beginTime|getDateTimeString}}</div>

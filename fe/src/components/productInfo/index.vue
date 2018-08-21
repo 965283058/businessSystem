@@ -38,7 +38,7 @@
 <template>
     <div class="product-box">
         <div class="cell">
-            <label class="cell__caption">名称：</label>
+            <label class="cell__caption">短标题：</label>
             <div>{{product.name}}</div>
         </div>
         <div class="cell">
