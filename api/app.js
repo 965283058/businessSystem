@@ -2,17 +2,22 @@ const timeout = 35 * 60 * 1000//session超时时间 30分钟
 module.exports = app => {
     app.sessionStore = {
         async get(key) {
-            const res = await app.redis.get(key);
-            if (!res) return null;
-            let diff = Date.now() - res.__time
-            if (diff > timeout) {
-                this.destroy(key)
+            try {
+                let data = await app.redis.get(key);
+                if (!data) return null;
+                data = JSON.parse(data)
+                let diff = Date.now() - data.__time
+                if (diff > timeout) {
+                    this.destroy(key)
+                    return null
+                }
+                if (diff > 300000) {
+                    this.set(key, data)
+                }
+                return data
+            } catch (e) {
                 return null
             }
-            if (diff > 300000) {
-                this.set(key, res)
-            }
-            return JSON.parse(res);
         },
         async set(key, value, maxAge) {
             let expireDate = 30 * 60 * 1000;
