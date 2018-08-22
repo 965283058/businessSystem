@@ -44,7 +44,7 @@ const scoreRule = {
 const urgeRule = {
     page: {type: 'int', required: true},
     rows: {type: 'int', required: true},
-    day: {type: "string", required: true, format: /\d+/},
+    day: {type: "string", required: true, format: /^(\d(-[0-9]\d?)?)$|^(>[1-9]\d*)$/}
 }
 
 const dayTime = 24 * 60 * 60 * 1000
@@ -243,10 +243,29 @@ class ProductController extends Controller {
         let params = this.parseParams(request.query)
         this.ctx.validate(urgeRule, params)
         params.activityEndDate = []
-        for (let i = params.day; i >= 0; i--) {
-            let dateString = getDateString(Date.now() - dayTime * i)
-            params.activityEndDate.push(dateString)
+
+        if (request.query.day.indexOf('>') == -1) {
+            let dayArr = request.query.day.split('-').map(item=> {
+                return Number.parseInt(item)
+            })
+
+            let begin = Math.max(...dayArr)
+            let end = Math.min(...dayArr)
+            let now = Date.now()
+            for (let i = begin; i >= end; i--) {
+                params.activityEndDate.push(getDateString(now - dayTime * i))
+            }
+        } else {
+            let toDay = new Date()
+            toDay.setHours(23)
+            toDay.setMinutes(59)
+            toDay.setSeconds(59)
+            toDay.setMilliseconds(999)
+            params.activityEndTime = toDay.getTime() - Number.parseInt(params.day) * dayTime
         }
+        console.info(params)
+
+
         params.status = 0
         let reuslt = await service.product.list(params)
         this.output(reuslt)

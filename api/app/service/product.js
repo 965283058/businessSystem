@@ -31,7 +31,14 @@ class ProductService extends BaseService {
                 where['orderLink'] = new RegExp(params.productId)
             }
             if (params.activityEndDate) {
-                where['endDate'] = {'$in': params.activityEndDate}
+                if (Array.isArray(params.activityEndDate)) {
+                    where['endDate'] = {'$in': params.activityEndDate}
+                } else {
+                    where['endDate'] = params.activityEndDate
+                }
+            }
+            if (params.activityEndTime) {
+                where['endTime'] = {"$let": params.activityEndTime}
             }
 
             if (params.userId) {

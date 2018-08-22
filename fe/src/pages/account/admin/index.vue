@@ -90,7 +90,8 @@
                     <template slot-scope="scope">
                         <span v-if="scope.row.status===-1">已删除</span>
                         <div v-else>
-                            <el-switch v-if="scope.row._id!=vo.currAdmin.id&&scope.row.superAdmin!==1" :active-value="1" :inactive-value="0"
+                            <el-switch v-if="scope.row._id!=vo.currAdmin.id&&scope.row.superAdmin!==1" :active-value="1"
+                                       :inactive-value="0"
                                        v-model="scope.row.status"
                                        active-color="#13ce66" inactive-color="#ff4949"
                                        @change="changeStatus(scope.row)"></el-switch>
@@ -102,9 +103,9 @@
                 <el-table-column label="操作" width="150" align="center">
                     <template slot-scope="scope">
                         <div v-if="canSet(scope.row)">
-                            <span class="dg_button" @click="showDialog('edit',scope.row)">编辑</span>
-                            <span class="dg_button" @click="resetPwd(scope.row)">重置密码</span>
-                            <span class="dg_button" @click="del(scope.row)">删除</span>
+                            <span class="dg_button" v-if="hasPower('admin_edit')" @click="showDialog('edit',scope.row)">编辑</span>
+                            <span class="dg_button" v-if="hasPower('admin_resetPwd')" @click="resetPwd(scope.row)">重置密码</span>
+                            <span class="dg_button" v-if="hasPower('admin_del')" @click="del(scope.row)">删除</span>
                         </div>
                         <span v-else>不可操作</span>
                     </template>
@@ -147,7 +148,7 @@
 </template>
 
 <script>
-    import {getDateTimeString, getDateString} from 'utils'
+    import {getDateTimeString, getDateString, hasPower} from 'utils'
     import bus  from 'utils/bus'
     export default {
         data(){
@@ -175,6 +176,7 @@
         },
         computed: {},
         methods: {
+            hasPower,
             canSet(row){
                 if (row._id == this.vo.currAdmin.id) {
                     return false

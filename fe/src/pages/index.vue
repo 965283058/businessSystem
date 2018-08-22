@@ -11,7 +11,7 @@
 
     .jf-header {
         height: 60px;
-        padding-left: 40px;
+        /*padding-left: 40px;*/
         background: #3bc1a6;
         flex-shrink: 0;
     }
@@ -21,6 +21,7 @@
         font-size: 32px;
         line-height: 60px;
         float: left;
+        margin-left: 9px;
     }
 
     .header_button {

@@ -127,3 +127,21 @@ export const guid = ()=> {
 
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
+
+
+export const hasPower = (code)=> {
+    let admin = null
+    try {
+        admin = JSON.parse(sessionStorage.getItem("admin"))
+    } catch (e) {
+        return false
+    }
+
+    if (admin.superAdmin === 1) {
+        return true
+    }
+    if (admin.apis.indexOf(code) > -1) {
+        return true
+    }
+    return false
+}

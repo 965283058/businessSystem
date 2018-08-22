@@ -23,14 +23,17 @@
     }
 
     .search__result {
-        width: 300px;
+        width: 400px;
         height: 50px;
         flex-shrink: 0;
     }
 
     .search__radio {
         margin: 0;
-        margin-right: 15px;
+        margin-right: 10px;
+    }
+    .search__radio >>> .el-radio__label{
+        padding-left: 3px;
     }
 
     .search__result--input {
@@ -80,9 +83,10 @@
         <div class="top">
             <label>结束时间：</label>
             <div class="search__result">
-                <el-radio class="search__radio" v-model="po.params.day" :label="0">结束当天</el-radio>
-                <el-radio class="search__radio" v-model="po.params.day" :label="4">结束5天</el-radio>
-                <el-radio class="search__radio" v-model="po.params.day" :label="9">结束10天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" label="0">结束当天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" label="1-5">结束1-5天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" label="5-10">结束5-10天</el-radio>
+                <el-radio class="search__radio" v-model="po.params.day" label=">10">10天以上</el-radio>
             </div>
             <div class="search__result search__result--input">
                 <el-input class="top__input" placeholder="输入商品ID进行搜索" v-model="po.params.productId"
@@ -193,7 +197,7 @@
             return {
                 po: {
                     params: {
-                        day: 0,
+                        day: '0',
                         userId:'',
                         productId:''
                     },

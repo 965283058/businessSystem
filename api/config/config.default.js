@@ -58,6 +58,14 @@ module.exports = appInfo => {
         }
     }
 
+    config.session = {
+        maxAge: 30 * 60 * 1000, // 30分钟超时
+        key: 'zs_key',
+        httpOnly: true,
+        encrypt: false,
+        renew: true
+    };
+
     return config;
 };
 
