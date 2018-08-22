@@ -143,13 +143,9 @@
             </el-table-column>
             <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                              align="center"></el-table-column>
-            <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
-                             header-align="center"></el-table-column>
-            <el-table-column key="remark" prop="remark" label="备注" min-width="280"
-                             header-align="center"></el-table-column>
-
-            <el-table-column prop="createor.name" label="招商员" width="120" align="center"></el-table-column>
-
+            <el-table-column key="desc" prop="desc" label="商品文案" min-width="200" header-align="center"></el-table-column>
+            <el-table-column key="remark" prop="remark" label="备注" min-width="200" header-align="center"></el-table-column>
+            <el-table-column prop="createor.name" label="招商员" width="100" align="center"></el-table-column>
             <el-table-column label="操作" align="center" key="setting" width="100" fixed="right">
                 <template slot-scope="scope">
                     <p class="dg__button" @click="openInfoDialog(scope.row)">查看详情</p>
