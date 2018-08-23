@@ -311,7 +311,7 @@
             }
         },
         watch: {
-            'po.day': function (val) {
+            'po.params.day': function (val) {
                 this.getList()
             }
         }
