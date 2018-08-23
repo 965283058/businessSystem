@@ -111,9 +111,8 @@
                                 </perview>
                             </template>
                         </el-table-column>
-                        <el-table-column key="name" prop="name" label="短标题" width="240"
-                                         header-align="center"></el-table-column>
-                        <el-table-column key="active" label="活动时间" width="200" align="center">
+                        <el-table-column key="name" prop="name" label="短标题" width="240" header-align="center"></el-table-column>
+                        <el-table-column key="active" label="活动时间" width="150" align="center">
                             <template slot-scope="scope">
                                 <div>{{scope.row.beginTime|getDateTimeString}}</div>
                                 <span class="time_join">至</span>
@@ -129,9 +128,9 @@
                         </el-table-column>
                         <el-table-column key="serviceCharge" prop="serviceCharge" label="服务费" width="100"
                                          align="center"></el-table-column>
-                        <el-table-column key="desc" prop="desc" label="商品文案" min-width="280"
+                        <el-table-column key="desc" prop="desc" label="商品文案" min-width="260"
                                          header-align="center"></el-table-column>
-                        <el-table-column key="remark" prop="remark" label="备注" min-width="280"
+                        <el-table-column key="remark" prop="remark" label="备注" min-width="200"
                                          header-align="center"></el-table-column>
                         <el-table-column label="操作" width="135" align="center" fixed="right" key="setting">
                             <template slot-scope="scope">
