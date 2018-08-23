@@ -1,11 +1,9 @@
 import Vue from 'vue'
-import router from '../router'
 
 export const post = function (url, params, opts = {}) {
+    opts.headers = getHeaders(opts.headers)
     if (!(params instanceof FormData)) {
-        opts["headers"] = {
-            'content-type': 'application/json'
-        }
+        opts["headers"]["content-type"] = 'application/json'
     }
     return Vue.http.post(url, params, opts).then(result, err)
 }
@@ -46,7 +44,11 @@ let result = response => {
 let err = response => {
     // 处理http状态码
     if (`${response.status}`.charAt(0) === '4') {
-        return Promise.reject({message: '请求资源不存在'})
+        if (response.status != 400) {
+            return Promise.reject({message: '请求资源不存在'})
+        } else {
+            return Promise.reject({message: '上传文件格式不允许'})
+        }
     } else if (`${response.status}`.charAt(0) === '5') {
         return Promise.reject({message: '服务器繁忙，请稍后再试'})
     }
@@ -65,3 +67,19 @@ const plugin = (Vue, opts) => {
 }
 
 export default plugin
+
+const getHeaders = (headers)=> {
+    if (!headers) {
+        headers = {}
+    }
+    headers['x-csrf-token'] = window.localStorage.getItem("token")
+    return headers
+}
+
+function getCookie(name) {
+    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        return decodeURIComponent(arr[2]);
+    else
+        return null;
+}

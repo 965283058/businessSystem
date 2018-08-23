@@ -82,7 +82,8 @@
         overflow-x: hidden;
         padding-top: 20px;
     }
-    .left-menu::-webkit-scrollbar{
+
+    .left-menu::-webkit-scrollbar {
         width: 2px;
     }
 
@@ -165,7 +166,6 @@
         background: #46425a;
         color: #ffffff;
     }
-
 
 
 </style>
@@ -329,6 +329,8 @@
                     this.$post('/logout').then(()=> {
                         window.sessionStorage.removeItem("admin")
                         this.$router.replace("/login")
+                    }).catch(err => {
+                        this.$alert(err.message, {type: "error"})
                     })
                 }).catch(() => {
                 });

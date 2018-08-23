@@ -16,7 +16,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        top:0;
+        top: 0;
         bottom: 0;
         z-index: 2;
         cursor: pointer;
@@ -197,13 +197,16 @@
         components: {},
         filters: {},
         watch: {
-            'url': function (val, oldVal) {
-                if (val === oldVal) {
-                    return
-                }
-                if (val && typeof val == "string") {
-                    this.po.url = val
-                }
+            'url': {
+                handler: function (val, oldVal) {
+                    if (val === oldVal) {
+                        return
+                    }
+                    if (val && typeof val == "string") {
+                        this.po.url = val
+                    }
+                },
+                immediate: true
             }
         }
     }

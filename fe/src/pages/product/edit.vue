@@ -53,7 +53,7 @@
             </el-form-item>
 
             <el-form-item label="券截图" prop="voucherLink">
-                <jf-upload :url="po.voucherImage" ref="voucherImageUpload" width="400" height="100">
+                <jf-upload :url="po.voucherImage" ref="voucherImageUpload" width="620" height="160">
                     <span>查看大图</span>
                 </jf-upload>
             </el-form-item>
@@ -89,7 +89,7 @@
                                 v-model="po.beginTime"></el-date-picker>
                 <span>——</span>
                 <el-date-picker type="datetime" placeholder="结束时间" value-format="timestamp"
-                                v-model="po.endTime"></el-date-picker>
+                                v-model="po.endTime" default-time="23:59:59"></el-date-picker>
             </el-form-item>
 
             <el-form-item label="备注">
@@ -106,6 +106,7 @@
 <script>
     export default {
         data(){
+            const urlReg = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/
             const checkTime = (rule, value, callback) => {
                 if (!this.po.beginTime && !this.po.endTime) {
                     return callback(new Error('请选择活动时间'));
@@ -123,8 +124,13 @@
             };
 
             const checkImg = (rule, value, callback) => {
-                if (this.po.imgType == 1 && !this.po.img) {
-                    return callback(new Error('请输入图片外链'));
+                if (this.po.imgType == 1) {
+                    if (!this.po.img) {
+                        return callback(new Error('请输入图片外链'));
+                    }
+                    if (!urlReg.test(this.po.img)) {
+                        return callback(new Error('图片链格式不正确'));
+                    }
                 }
                 callback();
             };
@@ -164,7 +170,8 @@
                 },
                 poClone: null,
                 vo: {
-                    mode: 'add'
+                    mode: 'add',
+                    scrollEl: null
                 },
 
                 rules: {
@@ -174,7 +181,6 @@
                     ],
                     img: [
                         {validator: checkImg, required: true, trigger: 'blur'},
-                        {type: 'url', message: '图片外链格式不正确', trigger: 'blur'}
                     ],
                     costPrice: [
                         {required: true, message: '请输入商品原价', trigger: 'blur'}
@@ -249,52 +255,67 @@
                     this.$set(this.po, field, newVal)
                 })
             },
-            save(){
-                this.$refs.form.validate((valid) => {
-                    if (valid) {
-                        let fd = new FormData()
-                        if (this.po.id) {
-                            fd.append("id", this.po.id)
-                        }
-
-                        if (this.po.imgType == 0) {
-                            let fileInput = this.$refs.upload.$el.querySelector('input[type=file]')
-                            if (fileInput && fileInput.files.length) {
-                                fd.append("img", fileInput.files[0])
-                            } else {
-                                return this.$message.error("请选择商品图片")
-                            }
-                        } else {
-                            fd.append("img", this.po.img)
-                        }
-
-
-                        let voucherImageFiles = this.$refs.voucherImageUpload.$el.querySelector('input[type=file]').files
-                        if (voucherImageFiles && voucherImageFiles.length) {
-                            fd.append("voucherImage", voucherImageFiles[0])
-                        } else if (!this.po.id || (this.po.id && !this.po.voucherImage)) {
-                            return this.$message.error("请选择商品券截图")
-                        }
-
-                        Object.keys(this.po).forEach(key=> {
-                            if (!fd.has(key)) {
-                                fd.append(key, this.po[key])
-                            }
-                        })
-
-
-                        this.$post("/product/edit", fd).then(data=> {
-                            if (this.po.id) {
-                                this.$message("修改成功")
-                                this.$router.back()
-                            } else {
-                                this.$message("添加成功")
-                                this.reset()
-                            }
-                        }).catch(err=> {
-                            this.$alert(err.message, {type: 'error'})
-                        })
+            toErrorEl(prop){
+                if (this.vo.scrollEl) {
+                    let errEl = this.$el.querySelector(`label[for=${prop}]`)
+                    if (errEl) {
+                        this.vo.scrollEl.scrollTop = errEl.scrollTop
                     }
+                }
+            },
+            save(){
+                this.$refs.form.validate((reslut, error)=> {
+                    if (!reslut) {
+                        this.toErrorEl(Object.keys(error)[0])
+                        return
+                    }
+
+                    let fd = new FormData()
+                    if (this.po.id) {
+                        fd.append("id", this.po.id)
+                    }
+
+                    if (this.po.imgType == 0) {
+                        let fileInput = this.$refs.upload.$el.querySelector('input[type=file]')
+                        if (fileInput && fileInput.files.length) {
+                            fd.append("img", fileInput.files[0])
+                        } else if (!this.po.id) {
+                            return this.$message.error("请选择商品图片")
+                        }
+                    } else {
+                        fd.append("img", this.po.img)
+                    }
+
+                    if (!fd.has("img") && !this.po.img.trim()) {
+                        return this.$message.error("请选择商品图片")
+                    }
+
+
+                    let voucherImageFiles = this.$refs.voucherImageUpload.$el.querySelector('input[type=file]').files
+                    if (voucherImageFiles && voucherImageFiles.length) {
+                        fd.append("voucherImage", voucherImageFiles[0])
+                    } else if (!this.po.id || (this.po.id && !this.po.voucherImage)) {
+                        return this.$message.error("请选择商品券截图")
+                    }
+
+                    Object.keys(this.po).forEach(key=> {
+                        if (!fd.has(key)) {
+                            fd.append(key, this.po[key])
+                        }
+                    })
+
+
+                    this.$post("/product/edit", fd).then(data=> {
+                        if (this.po.id) {
+                            this.$message("修改成功")
+                            this.$router.back()
+                        } else {
+                            this.$message("添加成功")
+                            this.reset()
+                        }
+                    }).catch(err=> {
+                        this.$alert(err.message, {type: 'error'})
+                    })
                 })
             },
             getInfo() {
@@ -319,20 +340,16 @@
                         this.$router.back()
                     }
                 }
-            }
-            ,
-            reset()
-            {
+            },
+            reset() {
                 this.$refs.form.resetFields()
                 if (this.$refs.upload) {
                     this.$refs.upload.reset()
                 }
                 this.$refs.voucherImageUpload.reset()
                 this.po = JSON.parse(JSON.stringify(this.poClone))
-            }
-            ,
-            cancel()
-            {
+            },
+            cancel() {
                 if (this.$route.params.id) {
                     this.$router.back()
                 } else {
@@ -341,41 +358,52 @@
 
             }
         },
-        mounted()
-        {
+        mounted() {
             this.poClone = JSON.parse(JSON.stringify(this.po))
             this.getInfo()
-        }
-        ,
-        components: {}
-        ,
-        filters: {}
-        ,
+            this.vo.scrollEl = getScrollElement(this.$el)
+            console.info(this.$el)
+        },
+        components: {},
+        filters: {},
         watch: {
             'po.costPrice': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'costPrice')
-            }
-
-            ,
+            },
             'po.price': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'price')
-            }
-
-            ,
+            },
             'po.serviceCharge': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'serviceCharge')
-            }
-
-            ,
+            },
             'po.commission': function (val, oldVal) {
                 this.numberFilter(val, oldVal, 'commission')
-            }
-
-            ,
+            },
             '$route': function () {
                 this.vo.mode = 'add'
                 this.reset()
             }
+        }
+    }
+
+    function getScrollElement(el) {
+        var coordinate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'y';
+
+        coordinate = coordinate.toUpperCase();
+        var parent = el.parentNode;
+        var attr = 'overflow' + coordinate;
+        var value = void 0;
+        while (parent.tagName !== 'HTML' && parent.tagName !== 'body' && parent.nodeType === 1) {
+            value = getStyle(parent, attr);
+            if (value === 'auto' || value === 'scroll') {
+                return parent;
+            }
+            parent = parent.parentNode;
+        }
+        return window;
+
+        function getStyle(el, attr) {
+            return window.getComputedStyle(el, null)[attr];
         }
     }
 </script>

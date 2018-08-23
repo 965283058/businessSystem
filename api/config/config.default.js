@@ -20,6 +20,9 @@ module.exports = appInfo => {
         fileSize: '100mb',
         fields: 1000,//最多1000个字段
         fieldSize: '10mb',//字段最大10兆
+        whitelist: ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+
+
     }
 
     config.static = {
@@ -30,12 +33,12 @@ module.exports = appInfo => {
 
     config.security = {
         csp: {
-            enable: false,
+            enable: true,
         },
         csrf: {
-            ignore: '/',
-            queryName: '_jf_CSRF', // 通过 query 传递 CSRF token 的默认字段为 _csrf
-            bodyName: '_jf_CSRF', // 通过 body 传递 CSRF token 的默认字段为 _csrf
+            useSession:true,
+            ignore: '/api/login',
+            headerName: 'x-csrf-token', // request csrf token's name in header
         },
     }
 

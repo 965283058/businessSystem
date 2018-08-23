@@ -35,6 +35,7 @@ class AdminService extends BaseService {
             if (admin.superAdmin != 1) { //如果是普通用户
                 await this.updateSessionAdminPower()
             }
+            this.ctx.rotateCsrfSecret();
             return {
                 id: admin._id,
                 name: admin.name,
@@ -42,7 +43,8 @@ class AdminService extends BaseService {
                 power: admin.power,
                 superAdmin: admin.superAdmin,
                 job: admin.job,
-                apis:this.admin.apis
+                apis: this.admin.apis,
+                token: this.ctx.session.csrfToken
             }
         } else {
             if (admin.errCount < 5) {
