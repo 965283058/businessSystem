@@ -105,6 +105,7 @@ class AuditService extends BaseService {
                     if (prod.imgType == 0) {
                         prod.img[0] = `${this.app.domian}${prod.img[0]}`
                     }
+                    prod.voucherImage = prod.voucherImage ? `${this.app.domian}${prod.voucherImage}` : null
                     prod.price = prod.price.toFixed(2)
                     prod.serviceCharge = prod.serviceCharge.toFixed(2)
                     prod.costPrice = prod.costPrice.toFixed(2)
