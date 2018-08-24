@@ -76,7 +76,7 @@ export default {
             {
                 path: 'urge',
                 meta: {
-                    title: '催账管理'
+                    title: '收款管理'
                 },
                 component: (resolve) => {
                     require(['pages/urge'], resolve)

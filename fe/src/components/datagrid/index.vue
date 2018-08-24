@@ -213,6 +213,7 @@
                     let ph = parentElement.getBoundingClientRect().top
                     this.vo.height = parentElement.clientHeight - (h - ph ) - 50
                 }
+                this.$refs.table.doLayout()
             },
             _bindEvent(){
                 let self = this

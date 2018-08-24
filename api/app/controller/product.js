@@ -242,20 +242,18 @@ class ProductController extends Controller {
         const {request, service} = this.ctx;
         let params = this.parseParams(request.query)
         this.ctx.validate(urgeRule, params)
-        params.activityEndDate = []
-
-        if (request.query.day.indexOf('>') == -1) {
+        if (request.query.day.indexOf('>') == -1) { //如果是 Number-Number
             let dayArr = request.query.day.split('-').map(item=> {
                 return Number.parseInt(item)
             })
-
             let begin = Math.max(...dayArr)
             let end = Math.min(...dayArr)
             let now = Date.now()
+            params.activityEndDate = []
             for (let i = begin; i >= end; i--) {
                 params.activityEndDate.push(getDateString(now - dayTime * i))
             }
-        } else {
+        } else {//如果是 >Number
             let toDay = new Date()
             toDay.setHours(23)
             toDay.setMinutes(59)

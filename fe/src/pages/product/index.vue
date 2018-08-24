@@ -122,7 +122,7 @@
             <el-button type="success" size="small" @click="getList">查询</el-button>
             <el-button type="primary" size="small" @click="apply" v-if="hasPower('audit_apply')&&vo.showApply">批量结算申请
             </el-button>
-            <p class="text-warn">注意：背景色的为黄色置顶的，请尽快申请结算！</p>
+            <p class="text-warn" v-if="status=='wait'||status=='fail'">注意：背景色为黄色置顶的，请尽快申请结算！</p>
         </div>
         <DataGrid url="/product/list" :firstLoad="false" :params="po.params" ref="dg" :fit="true" size="mini"
                   @selection-change="selectChange" :row-style="dgRowStyle">
