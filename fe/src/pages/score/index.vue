@@ -90,6 +90,7 @@
         computed: {},
         methods: {
             getList(){
+                this.$refs.dg.reset()
                 this.$refs.dg.reload()
             },
             dateChange(){

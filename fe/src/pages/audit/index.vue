@@ -111,7 +111,8 @@
                                 </perview>
                             </template>
                         </el-table-column>
-                        <el-table-column key="name" prop="name" label="短标题" width="240" header-align="center"></el-table-column>
+                        <el-table-column key="name" prop="name" label="短标题" width="240"
+                                         header-align="center"></el-table-column>
                         <el-table-column key="active" label="活动时间" width="150" align="center">
                             <template slot-scope="scope">
                                 <div>{{scope.row.beginTime|getDateTimeString}}</div>
@@ -326,7 +327,10 @@
                 }
                 this.getList()
             },
-            getList(){
+            getList(reset = true){
+                if (reset) {
+                    this.$refs.dg.reset()
+                }
                 this.$refs.dg.reload()
             },
             audit(row){
@@ -360,7 +364,7 @@
                             this.po.audit.id = this.vo.selectRow._id
                             this.$post("/audit/do", this.po.audit).then(data=> {
                                 this.$message("审核成功", {type: 'success'})
-                                this.getList()
+                                this.getList(false)
                                 this.reset()
                             }).catch(err=> {
                                 this.$alert(err.message, {type: 'error'})

@@ -109,14 +109,14 @@
                       size="medium"></el-input>
 
 
-            <el-select class="top__input" clearable  v-if='hasPower("product_userList")' v-model="po.params.userId" placeholder="请选择招商员"  size="medium">
+            <el-select class="top__input" clearable v-if='hasPower("product_userList")' v-model="po.params.userId"
+                       placeholder="请选择招商员" size="medium">
                 <el-option v-for="item in vo.userList"
-                        :key="item._id"
-                        :label="item.name"
-                        :value="item._id">
+                           :key="item._id"
+                           :label="item.name"
+                           :value="item._id">
                 </el-option>
             </el-select>
-
 
 
             <el-button type="success" size="small" @click="getList">查询</el-button>
@@ -329,7 +329,7 @@
                 po: {
                     params: {
                         productId: '',
-                        userId:'',
+                        userId: '',
                         status: null,
                     },
                     apply: {
@@ -382,7 +382,10 @@
                 this.vo.selectItem = []
                 this.po.apply = JSON.parse(JSON.stringify(this.po.applyClone))
             },
-            getList(){
+            getList(reset = true){
+                if (reset) {
+                    this.$refs.dg.reset()
+                }
                 this.vo.selectItem = []
                 this.$refs.dg.reload()
             },
@@ -437,7 +440,7 @@
                     inputErrorMessage: '请输入取消原因！'
                 }).then(({value}) => {
                     this.$post("/product/cancel", {id: info._id, reason: value}).then(data=> {
-                        this.getList()
+                        this.getList(false)
                         return this.$message.info("操作成功！")
                     }).catch(err=> {
                         this.$alert(err.message, {type: 'error'})
@@ -488,7 +491,7 @@
                         this.$post("/audit/apply", fd).then(data=> {
                             this.$message("提交成功", {type: 'success'})
                             this.resetForm()
-                            this.getList()
+                            this.getList(false)
                         }).catch(err=> {
                             this.$alert(err.message, {type: 'error'})
                         })

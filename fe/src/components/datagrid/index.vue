@@ -169,7 +169,7 @@
                     this.vo.loading = false
                     this.vo.data = data.rows
                     this.vo.total = data.total
-                    this.$emit("data",data)
+                    this.$emit("data", data)
                 }).catch(err => {
                     this.vo.loading = false
                     this.$alert({
@@ -201,6 +201,9 @@
                     }
                 }
                 this.loadData()
+            },
+            reset(){
+                this.vo.currentPage = 1
             },
             reload(){
                 this.loadData()

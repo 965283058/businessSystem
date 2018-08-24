@@ -224,7 +224,10 @@
                 this.vo.product = prod
                 this.vo.showInfoDialog = true
             },
-            getList(){
+            getList(reset=true){
+                if(reset){
+                    this.$refs.dg.reset()
+                }
                 this.$refs.dg.reload()
                 this.vo.selectRow = null
                 this.vo.now = Date.now()
@@ -262,7 +265,7 @@
             urge(productIds){
                 this.$post("/message/send", {productIds}).then(data=> {
                     this.$message("发送成功")
-                    this.getList()
+                    this.getList(false)
                 }).catch(err=> {
                     this.$alert(err.message, {type: 'error'})
                 })
