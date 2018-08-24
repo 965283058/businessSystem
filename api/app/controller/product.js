@@ -261,7 +261,7 @@ class ProductController extends Controller {
             toDay.setMinutes(59)
             toDay.setSeconds(59)
             toDay.setMilliseconds(999)
-            params.activityEndTime = toDay.getTime() - Number.parseInt(params.day) * dayTime
+            params.activityEndTime = toDay.getTime() - Number.parseInt(params.day.replace(/[^0-9]/g, "")) * dayTime
         }
         params.status = 0
         let reuslt = await service.product.list(params)
