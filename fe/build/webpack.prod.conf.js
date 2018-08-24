@@ -66,7 +66,7 @@ let config = merge(base, {
         new webpack.DefinePlugin({
             "process.env": {
                 'NODE_ENV': "'production'",
-                'ROUTER_ROOT': "'",
+                'ROUTER_ROOT': "''",
                 'API_ROOT': "'/api'"
             }
         }),

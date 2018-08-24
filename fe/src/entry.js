@@ -23,6 +23,7 @@ Vue.use(http, {
     duration: 1,
     root: process.env.API_ROOT,
     timeout: 150000,
+    timestamp:true,
     loading: (bool) => {
         Vue.loading(bool)
     },

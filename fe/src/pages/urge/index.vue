@@ -83,7 +83,7 @@
         <div class="top">
             <label>结束时间：</label>
             <div class="search__result">
-                <!--<el-radio class="search__radio" v-model="po.params.day" label="0">结束当天</el-radio>-->
+                <el-radio class="search__radio" v-model="po.params.day" label=">0">全部时间</el-radio>
                 <el-radio class="search__radio" v-model="po.params.day" label="1-5">结束1-5天</el-radio>
                 <el-radio class="search__radio" v-model="po.params.day" label="5-10">结束5-10天</el-radio>
                 <el-radio class="search__radio" v-model="po.params.day" label=">10">10天以上</el-radio>
@@ -193,7 +193,7 @@
             return {
                 po: {
                     params: {
-                        day: '1-5',
+                        day: '>0',
                         userId:'',
                         productId:''
                     },

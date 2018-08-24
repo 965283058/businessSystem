@@ -6,7 +6,7 @@ const autoprefixer = require('autoprefixer')
 module.exports = {
     context: process.cwd(), //全局上下文的起始目录
     entry: {
-        base: ['vue', 'element-ui']
+        base: ['vue','vue-router', 'element-ui']
     },
     output: {
         path: path.join(__dirname, "dll"),
