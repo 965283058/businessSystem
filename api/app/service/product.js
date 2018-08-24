@@ -38,7 +38,7 @@ class ProductService extends BaseService {
                 }
             }
             if (params.activityEndTime) {
-                where['endTime'] = {"$let": params.activityEndTime}
+                where['endTime'] = {"$lte": params.activityEndTime}
             }
 
             if (params.userId) {
