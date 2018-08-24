@@ -44,7 +44,7 @@ const scoreRule = {
 const urgeRule = {
     page: {type: 'int', required: true},
     rows: {type: 'int', required: true},
-    day: {type: "string", required: true, format: /^(\d(-[0-9]\d?)?)$|^(>[1-9]\d*)$/}
+    day: {type: "string", required: true, format: /^(\d(-[0-9]\d?)?)$|^(>\d+)$/}
 }
 
 const dayTime = 24 * 60 * 60 * 1000
