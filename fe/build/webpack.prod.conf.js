@@ -4,6 +4,7 @@ const webpack = require('webpack')
 const path = require('path')
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 const autoprefixer = require('autoprefixer')
 
 let config = merge(base, {
@@ -69,6 +70,15 @@ let config = merge(base, {
                 'ROUTER_ROOT': "''",
                 'API_ROOT': "'/api'"
             }
+        }),
+        new AddAssetHtmlPlugin({
+            filepath: path.join(process.cwd(), 'build/dll', 'base.dll.js'),
+            includeSourcemap: false
+        }),
+        new webpack.DllPlugin({
+            context: process.cwd(),
+            path: path.join(process.cwd(), '/build/dll', "manifest.json"),
+            name: "[name]_library",
         }),
         new ExtractTextPlugin({
             filename: "css/[name].[contenthash:6].css"

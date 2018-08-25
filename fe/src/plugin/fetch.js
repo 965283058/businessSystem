@@ -12,32 +12,44 @@ export const get = function (url, params, opts = {}) {
     return Vue.http.get(url, Object.assign({}, {params: params}, opts)).then(result, err)
 }
 
-const toLogin = function () {
+const confirmLogin = function (config, message) {
+    if (config.transformLogin !== false) {
+        Vue.nextTick(()=> {
+            Vue.Message.closeAll()
+            Vue.MessageBox({
+                title: "提示",
+                message: message,
+                type: 'warning'
+            }).then(data=> {
+                goLogin()
+            }).catch(err=> {
+                goLogin()
+            })
+        })
+    }
+}
+const goLogin = function () {
+    window.sessionStorage.removeItem("admin")
     window.location.href = `${window.location.origin}/login`
 }
 
 let result = response => {
-    if (response.data.status == 0) {
-        return Promise.resolve(response.data.data)
-    } else if (response.data.status == -1) {
-        window.sessionStorage.removeItem("admin")
-        if (response.config.transformLogin === undefined || response.config.transformLogin === true) {
-            Vue.nextTick(()=> {
-                Vue.Message.closeAll()
-                Vue.MessageBox({
-                    title: "提示",
-                    message: "您的登录已失效，请重新登录！",
-                    type: 'warning'
-                }).then(data=> {
-                    toLogin()
-                }).catch(err=> {
-                    toLogin()
-                })
-            })
+    if (response.status == 200) {
+        if (response.data.status === 0) {
+            return Promise.resolve(response.data.data)
+        } else if (response.data.status == -1) {
+            confirmLogin(response.config, "您的登录已失效，请重新登录！")
+            return Promise.reject({message: ''})
+        } else {
+            return Promise.reject(response.data)
         }
-        return Promise.reject({message: ''})
     } else {
-        return Promise.reject(response.data)
+        if (response.data.message == "invalid csrf token") {
+            confirmLogin(response.config, "您的安全码已失效，请重新登录！")
+            return Promise.reject({message: ''})
+        } else {
+            return err(response)
+        }
     }
 }
 
