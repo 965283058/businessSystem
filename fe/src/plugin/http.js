@@ -29,7 +29,6 @@ function plugin(Vue, opts) {
     requestLoadingHandler(http, opts)
     requestTimestampHandler(http, opts)
     requestRepeatHandler(http, opts)
-    requestFailedHandler(http, opts)
 
     if (opts.autoFixedError) {
         responseStatusHandler(http, opts)
@@ -39,25 +38,6 @@ function plugin(Vue, opts) {
     Vue.prototype.$http = http
 }
 
-function requestFailedHandler(http, opts) {
-    http.interceptors.request.use((config) => {
-        let onLine = true
-
-        if (window.navigator.onLine !== undefined) {
-            onLine = window.navigator.onLine
-        }
-
-        if (config.onLine !== undefined) {
-            onLine = config.onLine
-        }
-
-        if (!(config.onLine = onLine)) {
-            opts.error('网络超时')
-        }
-
-        return config
-    })
-}
 
 function requestTimeoutHandler(http, opts) {
     http.interceptors.response.use((res) => res, (err) => {

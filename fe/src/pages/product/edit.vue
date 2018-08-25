@@ -362,7 +362,6 @@
             this.poClone = JSON.parse(JSON.stringify(this.po))
             this.getInfo()
             this.vo.scrollEl = getScrollElement(this.$el)
-            console.info(this.$el)
         },
         components: {},
         filters: {},

@@ -64,6 +64,7 @@ let err = response => {
     } else if (`${response.status}`.charAt(0) === '5') {
         return Promise.reject({message: '服务器繁忙，请稍后再试'})
     }
+    return Promise.reject({message: response})
 }
 
 

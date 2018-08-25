@@ -97,7 +97,6 @@
                 this.$nextTick(this.getList)
             },
             dataChange(data){
-                console.info(data)
                 this.vo.count = data.count || 0
             }
         },
