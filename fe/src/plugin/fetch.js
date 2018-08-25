@@ -54,17 +54,25 @@ let result = response => {
 }
 
 let err = response => {
-    // 处理http状态码
-    if (`${response.status}`.charAt(0) === '4') {
-        if (response.status != 400) {
-            return Promise.reject({message: '请求资源不存在'})
-        } else {
-            return Promise.reject({message: '上传文件格式不允许'})
+    if (typeof response === 'object') {
+        // 处理http状态码
+        if (`${response.status}`.charAt(0) === '4') {
+            if (response.status != 400) {
+                return Promise.reject({message: '请求资源不存在'})
+            } else {
+                return Promise.reject({message: '上传文件格式不允许'})
+            }
+        } else if (`${response.status}`.charAt(0) === '5') {
+            return Promise.reject({message: '服务器繁忙，请稍后再试'})
+        } else if (`${response.status}`.charAt(0) === '6') {
+            return Promise.reject({message: '网络超时'})
         }
-    } else if (`${response.status}`.charAt(0) === '5') {
-        return Promise.reject({message: '服务器繁忙，请稍后再试'})
+        return Promise.reject({message: '请求失败'})
+    } else if (typeof response === 'string') {
+        return Promise.reject({message: response})
+    } else {
+        return Promise.reject({message: '请求失败'})
     }
-    return Promise.reject({message: response})
 }
 
 
