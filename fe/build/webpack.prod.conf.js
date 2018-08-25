@@ -71,7 +71,7 @@ let config = merge(base, {
                 'API_ROOT': "'/api'"
             }
         }),
-        new AddAssetHtmlPlugin({
+       /* new AddAssetHtmlPlugin({
             filepath: path.join(process.cwd(), 'build/dll', 'base.dll.js'),
             includeSourcemap: false
         }),
@@ -79,7 +79,7 @@ let config = merge(base, {
             context: process.cwd(),
             path: path.join(process.cwd(), '/build/dll', "manifest.json"),
             name: "[name]_library",
-        }),
+        }),*/
         new ExtractTextPlugin({
             filename: "css/[name].[contenthash:6].css"
         }),
