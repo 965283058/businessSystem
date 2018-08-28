@@ -3,6 +3,15 @@ const crypto = require('crypto');
 
 class AdminService extends BaseService {
 
+    async getNewCSRF() {
+        this.ctx.rotateCsrfSecret();
+        return new Promise((rev, rej)=> {
+            process.nextTick(()=> {
+                rev()
+            })
+        })
+    }
+
     async login(info) {
         let admin = null
         try {
@@ -35,7 +44,9 @@ class AdminService extends BaseService {
             if (admin.superAdmin != 1) { //如果是普通用户
                 await this.updateSessionAdminPower()
             }
-            this.ctx.rotateCsrfSecret();
+
+            await this.getNewCSRF()
+
             return {
                 id: admin._id,
                 name: admin.name,
