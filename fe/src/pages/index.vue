@@ -364,7 +364,7 @@
                 if (this.messageList && this.messageList.length) {
                     this.msgDialog.id = this.messageList[0]._id
                     this.msgDialog.text = this.messageList[0].content
-                    this.msgDialog.btnText = '30秒后可以关闭'
+                    this.msgDialog.btnText = '10秒后可以关闭'
                     this.msgDialog.show = true
                     let time = 10
                     this.msgDialog.timer = setInterval(()=> {

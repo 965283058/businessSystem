@@ -44,7 +44,7 @@ class AdminService extends BaseService {
                 superAdmin: admin.superAdmin,
                 job: admin.job,
                 apis: this.admin.apis,
-                token: this.ctx.session.csrfToken
+                token: this.ctx.csrf
             }
         } else {
             if (admin.errCount < 5) {
