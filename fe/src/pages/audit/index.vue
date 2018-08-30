@@ -330,7 +330,7 @@
                         this.po.params.result = 1
                         break;
                 }
-                this.getList()
+                this.$nextTick(this.getList)
             },
             getList(reset = true){
                 if (reset) {

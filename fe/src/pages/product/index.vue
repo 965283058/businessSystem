@@ -531,7 +531,7 @@
                         document.title = '商品管理-已取消'
                         break;
                 }
-                this.getList()
+                this.$nextTick(this.getList)
             },
 
             openAuditDialog(id){
