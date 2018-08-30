@@ -5,14 +5,15 @@ const webpackDevMiddleware = require("webpack-dev-middleware");
 const webpackHotMiddleware = require("webpack-hot-middleware")
 const config = require('../build/webpack.dev.conf.js')
 const DashboardPlugin = require('webpack-dashboard/plugin');
-var proxy = require('http-proxy-middleware')
+const proxy = require('http-proxy-middleware')
+const chalk=require("chalk")
 
-//webpack-dashboard --
+
 let app = new express();
 let port, serverConfig
 
 serverConfig = Object.assign({}, {
-    port: 9999
+    port: 8080
 }, config.server)
 
 config.devServer = config.devServer || {}
@@ -21,8 +22,12 @@ config.devServer.hot = true
 
 port = process.argv[2] || serverConfig.port
 config.entry.unshift('webpack-hot-middleware/client')
+
+app.use(config.server.path, proxy(config.server.proxy.path, config.server.proxy.options));
+delete config.server
 let compiler = webpack(config)
-compiler.apply(new DashboardPlugin());
+
+// compiler.apply(new DashboardPlugin());//性能监视
 
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath || '',
@@ -38,10 +43,9 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler));
 
-app.use('/api/*', proxy('/api', {target: 'http://127.0.0.1:7001', changeOrigin: true}));
 
 app.use(function (req, res, next) {
-    var url = path.join(compiler.outputPath, 'index.html')
+    let url = path.join(compiler.outputPath, 'index.html')
     if (req.path.indexOf(".") > 0) {
         url = path.join(compiler.outputPath, req.path)
     }
@@ -58,5 +62,9 @@ app.listen(port, function (err) {
     if (err) {
         return console.log(err)
     }
-    console.log(`http://localhost:${port}`)
+    console.log(chalk.red(' # Access URL:'))
+    console.log(chalk.gray(' ----------------------------------------'))
+    console.log('     Local: ' + chalk.green(`http://localhost:${port}`))
+    console.log(chalk.gray(' ----------------------------------------'))
+    console.log('')
 })

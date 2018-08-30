@@ -248,7 +248,8 @@
 
             getMenuList(){
                 this.$get('/manage/menu/treeMenu').then(data=> {
-                    this.vo.menus = data.map(item=> {
+                    let menus=data.menus
+                    this.vo.menus = menus.map(item=> {
                         if (item.children && item.children.length) {
                             item.children = item.children.map(child=> {
                                 child.children = []

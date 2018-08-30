@@ -4,6 +4,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "chalk": "^2.4.1",
     "element-ui": "^2.4.6",
     "http-proxy-middleware": "^0.18.0",
     "vt-validator": "^1.0.5",

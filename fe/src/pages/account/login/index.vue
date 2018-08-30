@@ -138,7 +138,6 @@
                         this.$post('/login', this.po).then(data=> {
                             if (data) {
                                 window.sessionStorage.setItem("admin", JSON.stringify(data))
-                                window.localStorage.setItem("token", data.token)
                                 this.$router.replace("/")
                             }
                         }).catch(err=> {

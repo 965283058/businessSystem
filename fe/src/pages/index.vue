@@ -340,9 +340,10 @@
             },
             getMenuList(){
                 this.$get('/manage/menu/treeMenu').then(data=> {
-                    this.menus = data
+                    window.localStorage.setItem("token", data.token)
+                    this.menus = data.menus
                     this.$nextTick(()=> {
-                        let menu = data[0]
+                        let menu = data.menus[0]
                         if (menu.children && menu.children.length) {
                             menu = menu.children[0]
                         }

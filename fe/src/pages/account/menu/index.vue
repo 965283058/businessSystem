@@ -161,7 +161,7 @@
                     let menus = []
                     this.vo.parentMenus = [{id: '0', text: '根节点'}]
 
-                    data.forEach(menu=> {
+                    data.menus.forEach(menu=> {
                         menus.push(menu)
                         this.vo.parentMenus.push({id: menu.id, text: menu.text})
                         if (menu.children && menu.children.length) {

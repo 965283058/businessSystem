@@ -84,7 +84,8 @@ class MenuService extends BaseService {
                     json.push(menu)
                 }
             }
-            return json
+
+            return {token: this.ctx.csrf, menus: json}
         }
     }
 

@@ -86,6 +86,14 @@ let config = merge(baseConfig, {
             context: process.cwd(),
             manifest: require(path.join(process.cwd(), 'build/dll', 'manifest.json')),
         })
-    ]
+    ],
+    server: {
+        port:9999,
+        path: '/api/*',
+        proxy: {
+            path: '/api',
+            options: {target: 'http://127.0.0.1:7001', changeOrigin: true}
+        }
+    }
 })
 module.exports = config
