@@ -314,6 +314,11 @@
         },
         methods: {
             init(){
+                this.po.params = {
+                    productId: '',
+                    userId: '',
+                    result: null
+                }
                 switch (this.status) {
                     case 'wait':
                         this.po.params.result = -1

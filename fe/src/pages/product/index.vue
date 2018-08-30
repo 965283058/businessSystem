@@ -504,6 +504,11 @@
                     this.vo.showApply = true
                     this.po.applyClone = JSON.parse(JSON.stringify(this.po.apply))
                 }
+                this.po.params = {
+                    productId: '',
+                    userId: '',
+                    status: null,
+                }
                 switch (this.status) {
                     case 'wait':
                         this.po.params.status = 0
