@@ -5,6 +5,7 @@ Vue.use(Router)
 let isFirst = true
 let router = new Router({
     mode: 'history',
+    base: process.env.ROUTER_ROOT,
     routes: Object.keys(routes).reduce((previous, current) => {
         return (previous.push({path: current, ...routes[current]}), previous)
     }, []),
