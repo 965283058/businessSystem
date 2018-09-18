@@ -175,7 +175,8 @@
         <div class="jf-header">
             <span class="jf-header__title">团队招商业绩登记平台</span>
             <el-dropdown class="jf-user-menu">
-                <span>{{admin.job?admin.job:(admin.superAdmin==-1?"招商员":'管理员')}}-{{admin.name}}<i class="el-icon-caret-bottom el-icon--right"></i></span>
+                <span>{{admin.job?admin.job:(admin.superAdmin==-1?"招商员":'管理员')}}-{{admin.name}}<i
+                        class="el-icon-caret-bottom el-icon--right"></i></span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item><span @click="showPasswordDialog()">修改密码</span></el-dropdown-item>
                     <el-dropdown-item><span @click="logout()">退出登录</span></el-dropdown-item>
@@ -405,10 +406,9 @@
             }
         },
         beforeRouteEnter(to, form, next){
-            alert(JSON.stringify(form))
             let admin = window.sessionStorage.getItem("admin")
-            if (!admin) {
-                window.location.href = window.location.origin+`${process.env.ROUTER_ROOT}/login`.replace(/\/\//g,'/')
+            if (!admin && !/\/login$/.test(window.location.href)) {
+                window.location.href = window.location.origin + `${process.env.ROUTER_ROOT}/login`.replace(/\/\//g, '/')
             } else {
                 next()
             }
