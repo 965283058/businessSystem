@@ -43,6 +43,7 @@
   "scripts": {
     "start": "node server",
     "dev": "./node_modules/.bin/webpack --config ./build/webpack.dev.conf.js --display-modules --display-chunks",
+    "test": "rm -rf dist&&./node_modules/.bin/webpack --config ./build/webpack.test.conf.js --display-modules --display-chunks",
     "build": "rm -rf dist&&./node_modules/.bin/webpack --config ./build/webpack.prod.conf.js --display-modules --display-chunks",
     "dll": "rm -rf dll&&./node_modules/.bin/webpack --config ./build/webpack.dll.conf.js --display-modules --display-chunks"
   }

@@ -30,7 +30,7 @@ const confirmLogin = function (config, message) {
 }
 const goLogin = function () {
     window.sessionStorage.removeItem("admin")
-    window.location.href = `${window.location.origin}/login`
+    window.location.href = window.location.origin+`${process.env.ROUTER_ROOT}/login`.replace(/\/\//g,'/')
 }
 
 let result = response => {
