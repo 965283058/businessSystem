@@ -405,6 +405,7 @@
             }
         },
         beforeRouteEnter(to, form, next){
+            alert(JSON.stringify(form))
             let admin = window.sessionStorage.getItem("admin")
             if (!admin) {
                 window.location.href = window.location.origin+`${process.env.ROUTER_ROOT}/login`.replace(/\/\//g,'/')
