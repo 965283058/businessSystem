@@ -27,6 +27,9 @@ class AdminService extends BaseService {
             if (admin.status == 0) {
                 return new Error("账号已禁用!")
             }
+            if (admin.status == -1) {
+                return new Error("账号已删除，恢复请联系管理员!")
+            }
             admin.lastLoginTime = Date.now();
             admin.errCount = 0;
             await admin.save();
@@ -51,7 +54,7 @@ class AdminService extends BaseService {
                 await admin.save();
                 return new Error("用户名或密码输入错误!")
             } else {
-                setTimeout(()=> {
+                setTimeout(() => {
                     admin.errCount = 0;
                     admin.save();
                 }, 1000 * 60 * 30);
@@ -273,7 +276,7 @@ class AdminService extends BaseService {
             let powers = await this.Model.AdminRole.find({"_id": {"$in": this.admin.power}})
             let menuIds = []
 
-            powers.forEach(item=> {
+            powers.forEach(item => {
                 menuIds = menuIds.concat(item.menus)
             })
 
@@ -284,7 +287,7 @@ class AdminService extends BaseService {
 
 
             let apis = []
-            powers.forEach(item=> {
+            powers.forEach(item => {
                 apis = apis.concat(item.apis)
             })
             admin.apis = apis
@@ -298,6 +301,7 @@ class AdminService extends BaseService {
 
 
 }
+
 module.exports = AdminService;
 
 
